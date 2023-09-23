@@ -18,11 +18,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
 public class Detector {
-    OpenCvInternalCamera phoneCam;
+    OpenCvWebcam phoneCam;
     IconDeterminationPipeline pipeline;
     LinearOpMode op;
 
@@ -31,9 +32,8 @@ public class Detector {
     }
 
     public void start() {
-        int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-
+        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
+        //phoneCam = op.hardwareMap.get(WebcamName.class, "Webcam 1");
         pipeline = new IconDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
@@ -47,7 +47,7 @@ public class Detector {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                phoneCam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -96,8 +96,8 @@ public class Detector {
         Point rl;
 
         // HSV threshold values
-        Scalar lower = new Scalar(78,78,37);
-        Scalar upper = new Scalar(112,255,255);
+        Scalar lower = new Scalar(104,152,95);
+        Scalar upper = new Scalar(118,255,255);
 
         /*
          * Working variables
