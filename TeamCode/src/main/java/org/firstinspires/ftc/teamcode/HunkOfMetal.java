@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class HunkOfMetal {
     DcMotor leftBack;
-    DcMotor leftFront;
+    DcMotor leftFront; 
     DcMotor rightBack;
     DcMotor rightFront;
     Gyro2 gyro;
