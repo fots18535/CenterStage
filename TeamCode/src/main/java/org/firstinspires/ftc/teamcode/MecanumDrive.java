@@ -194,7 +194,9 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new DriveLocalizer();
+        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+        // The code expects the two parallel encoders to be named "par0" and "par1"
+        // and the perpendicular one to be named "perp"
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

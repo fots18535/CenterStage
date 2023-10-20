@@ -19,6 +19,10 @@ public class ManualDriveDookie extends LinearOpMode {
     DcMotor leftFront;
     DcMotor rightBack;
     DcMotor rightFront;
+    DcMotor arm;
+    TouchSensor armStop;
+    DcMotor intakeMotor;
+    DcMotor slide;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,6 +30,10 @@ public class ManualDriveDookie extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        armStop = hardwareMap.get(TouchSensor.class, "armStop");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        slide = hardwareMap.get(DcMotor.class, "slide");
 
         // Reset the encoder to 0
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -38,16 +46,14 @@ public class ManualDriveDookie extends LinearOpMode {
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         double power = 0;
         double correction = 0;
 
         waitForStart();
-        boolean bottom = false;
-        boolean top = false;
-        int conestack = 4;
-        boolean squarepressedfirsttime = true;
-        boolean autopos = false;
+
         while (opModeIsActive()) {
 
             /*****************************/
@@ -60,7 +66,7 @@ public class ManualDriveDookie extends LinearOpMode {
             } else {
                 slowSpeed = 0.8;
             }
-            //Get the input from the gamepad controller
+            //Get the input from the game pad controller
             double leftX = gamepad1.left_stick_x * slowSpeed;
             double leftY = gamepad1.left_stick_y * slowSpeed;
             double rightX = -gamepad1.right_stick_x * slowSpeed;
@@ -73,6 +79,32 @@ public class ManualDriveDookie extends LinearOpMode {
             rightBack.setPower(rightX - rightY + leftX);
             rightFront.setPower(rightX - rightY - leftX);
 
+    //touch sensor for the arm
+            if(gamepad2.dpad_up && !armStop.isPressed()){
+                arm.setPower(0.5);
+            }else if(gamepad2.dpad_down) {
+                arm.setPower(-0.5);
+            }else{
+                arm.setPower(0);
+            }
+
+    //intake motor
+            if(gamepad2.circle){
+                intakeMotor.setPower(0.5);
+            }else if(gamepad2.square){
+                intakeMotor.setPower(-0.5);
+            }else{
+                intakeMotor.setPower(0);
+            }
+
+    //linear slide motor
+            if(gamepad2.cross){
+                slide.setPower(0.3);
+            }else if(gamepad2.triangle){
+                slide.setPower(-0.3);
+            }else{
+                slide.setPower(0);
+            }
         }
     }
-    }
+}
