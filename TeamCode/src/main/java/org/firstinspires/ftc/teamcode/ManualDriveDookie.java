@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,21 +26,42 @@ public class ManualDriveDookie extends LinearOpMode {
     DcMotor intakeMotor;
     DcMotor slide;
 
+    DcMotorEx par0, par1, perp;
+
     @Override
     public void runOpMode() throws InterruptedException {
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         arm = hardwareMap.get(DcMotor.class, "arm");
         armStop = hardwareMap.get(TouchSensor.class, "armStop");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         slide = hardwareMap.get(DcMotor.class, "slide");
 
+        par0 = hardwareMap.get(DcMotorEx.class, "leftBack");
+        par1 = hardwareMap.get(DcMotorEx.class, "rightBack");
+        perp = hardwareMap.get(DcMotorEx.class, "rightFront");
+        par0.setDirection(DcMotorSimple.Direction.REVERSE);
+        par1.setDirection(DcMotorSimple.Direction.REVERSE);
+        perp.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // Reset the encoder to 0
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Tells the motor to run until we turn it off
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        par1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        par1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        perp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        perp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Stops coasting
@@ -56,6 +79,11 @@ public class ManualDriveDookie extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            telemetry.addData("par0", par0.getCurrentPosition());
+            telemetry.addData("par1", par1.getCurrentPosition());
+            telemetry.addData("perp", perp.getCurrentPosition());
+            telemetry.update();
+
             /*****************************/
             /** Driving Control Section **/
             /*****************************/
@@ -67,9 +95,9 @@ public class ManualDriveDookie extends LinearOpMode {
                 slowSpeed = 0.8;
             }
             //Get the input from the game pad controller
-            double leftX = gamepad1.left_stick_x * slowSpeed;
+            double leftX = -gamepad1.left_stick_x * slowSpeed;
             double leftY = gamepad1.left_stick_y * slowSpeed;
-            double rightX = -gamepad1.right_stick_x * slowSpeed;
+            double rightX = gamepad1.right_stick_x * slowSpeed;
             double rightY = gamepad1.right_stick_y * slowSpeed;
             double distance = 7.0;
 
