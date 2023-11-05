@@ -144,57 +144,33 @@ public class HunkOfMetal {
             mode.idle();
         }
 
-        leftBack.setPower(0);
-        leftFront.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        stopMotors();
     }
 
-    public void forwardNoGyro(double power, double length) {
-        // Reset the encoder to 0
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Tells the motor to run until we turn it off
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
+    public void forward(double power, Stopper stopper) {
+        gyro.reset();
         long startTime = System.currentTimeMillis();
 
-        // Go forward until tics reached
+        // Go forward until stopper stops
+        stopper.begin();
         while (mode.opModeIsActive()) {
 
-            //absolute value of getCurrentPosition()
-            int tics = leftFront.getCurrentPosition();
-            if (tics < 0) {
-                tics = tics * -1;
-            }
-            //telemetry.addData("debug tics", tics);
-            //telemetry.addData("debug compare to ", length*ticksPerInch);
-
-            if (tics > length * ticksPerInch) {
+            if (stopper.stop()) {
                 break;
             }
 
             // Get the angle and adjust the power to correct
             double rpower = ramp(power, startTime);
-            leftBack.setPower(-rpower);
-            leftFront.setPower(-rpower);
-            rightBack.setPower(rpower);
-            rightFront.setPower(rpower);
+            float rightX = -1 * gyroCorrection * (float) gyro.getAngle();
+            leftBack.setPower(rightX - rpower);
+            leftFront.setPower(rightX - rpower);
+            rightBack.setPower(rightX + rpower);
+            rightFront.setPower(rightX + rpower);
 
             mode.idle();
         }
 
-        leftBack.setPower(0);
-        leftFront.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
-    }
-
-    public void motorsForward(double power) {
-        leftBack.setPower(-power);
-        leftFront.setPower(-power);
-        rightBack.setPower(power);
-        rightFront.setPower(power);
+        stopMotors();
     }
 
     public void turnLeft(double howFar, double speed) {
@@ -261,25 +237,6 @@ public class HunkOfMetal {
         rightBack.setPower(0.0);
         rightFront.setPower(0.0);
         leftBack.setPower(0.0);
-    }
-
-    // Positive power slides left
-    // Negative power slides right
-    public void chaChaRealSmooth(double power) {
-            leftBack.setPower(-power);
-            leftFront.setPower(power);
-            rightBack.setPower(-power);
-            rightFront.setPower(power);
-    }
-
-    public Gyro2 gyro()
-    {
-        return gyro;
-    }
-
-    public long getMotor()
-    {
-        return leftFront.getCurrentPosition();
     }
 }
 
