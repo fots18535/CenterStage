@@ -118,9 +118,9 @@ public class ManualDriveDookie extends LinearOpMode {
 
     //intake motor
             if(gamepad2.circle){
-                intakeMotor.setPower(0.5);
+                intakeMotor.setPower(1);
             }else if(gamepad2.square){
-                intakeMotor.setPower(-0.5);
+                intakeMotor.setPower(-1);
             }else{
                 intakeMotor.setPower(0);
             }
