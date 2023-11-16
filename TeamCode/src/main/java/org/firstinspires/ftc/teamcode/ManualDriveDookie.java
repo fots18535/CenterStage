@@ -16,61 +16,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class ManualDriveDookie extends LinearOpMode {
-
-    DcMotor leftBack;
-    DcMotor leftFront;
-    DcMotor rightBack;
-    DcMotor rightFront;
-    DcMotor arm;
-    TouchSensor armStop;
-    DcMotor intakeMotor;
-    DcMotor slide;
-
-    DcMotorEx par0, par1, perp;
+    Hardware hardware;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        armStop = hardwareMap.get(TouchSensor.class, "armStop");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        slide = hardwareMap.get(DcMotor.class, "slide");
-
-        par0 = hardwareMap.get(DcMotorEx.class, "leftBack");
-        par1 = hardwareMap.get(DcMotorEx.class, "rightBack");
-        perp = hardwareMap.get(DcMotorEx.class, "rightFront");
-        par0.setDirection(DcMotorSimple.Direction.REVERSE);
-        par1.setDirection(DcMotorSimple.Direction.REVERSE);
-        perp.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Reset the encoder to 0
-        par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        par1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        par1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        perp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        perp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        // Stops coasting
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware = new Hardware(this);
+        hardware.initialize();
 
         double power = 0;
         double correction = 0;
@@ -79,9 +30,9 @@ public class ManualDriveDookie extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            telemetry.addData("par0", par0.getCurrentPosition());
-            telemetry.addData("par1", par1.getCurrentPosition());
-            telemetry.addData("perp", perp.getCurrentPosition());
+            telemetry.addData("par0", hardware.par0.getCurrentPosition());
+            telemetry.addData("par1", hardware.par1.getCurrentPosition());
+            telemetry.addData("perp", hardware.perp.getCurrentPosition());
             telemetry.update();
 
             /*****************************/
@@ -102,36 +53,36 @@ public class ManualDriveDookie extends LinearOpMode {
             double distance = 7.0;
 
 
-            leftBack.setPower(rightX + rightY + leftX);
-            leftFront.setPower(rightX + rightY - leftX);
-            rightBack.setPower(rightX - rightY + leftX);
-            rightFront.setPower(rightX - rightY - leftX);
+            hardware.leftBack.setPower(rightX + rightY + leftX);
+            hardware.leftFront.setPower(rightX + rightY - leftX);
+            hardware.rightBack.setPower(rightX - rightY + leftX);
+            hardware.rightFront.setPower(rightX - rightY - leftX);
 
     //touch sensor for the arm
-            if(gamepad2.dpad_up && !armStop.isPressed()){
-                arm.setPower(0.5);
+            if(gamepad2.dpad_up && !hardware.armStop.isPressed()){
+                hardware.arm.setPower(0.5);
             }else if(gamepad2.dpad_down) {
-                arm.setPower(-0.5);
+                hardware.arm.setPower(-0.5);
             }else{
-                arm.setPower(0);
+                hardware.arm.setPower(0);
             }
 
     //intake motor
             if(gamepad2.circle){
-                intakeMotor.setPower(1);
+                hardware.intakeMotor.setPower(1);
             }else if(gamepad2.square){
-                intakeMotor.setPower(-1);
+                hardware.intakeMotor.setPower(-1);
             }else{
-                intakeMotor.setPower(0);
+                hardware.intakeMotor.setPower(0);
             }
 
     //linear slide motor
             if(gamepad2.cross){
-                slide.setPower(0.3);
+                hardware.slide.setPower(0.3);
             }else if(gamepad2.triangle){
-                slide.setPower(-0.3);
+                hardware.slide.setPower(-0.3);
             }else{
-                slide.setPower(0);
+                hardware.slide.setPower(0);
             }
         }
     }

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Stopper;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -35,37 +36,23 @@ public class AprilTagYay
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
-    private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
-    private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
-    private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
-
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     private LinearOpMode mode;
-    DcMotorEx par0, par1, perp;
 
+    private Hardware hardware;
+
+    public AprilTagYay(LinearOpMode op, Hardware hw){
+        mode = op;
+        hardware = hw;
+    }
     public void initializes() {
 
             // Initialize the Apriltag Detection process
             initAprilTag();
-
-            leftBackDrive = mode.hardwareMap.get(DcMotor.class, "leftBack");
-            leftFrontDrive = mode.hardwareMap.get(DcMotor.class, "leftFront");
-            rightBackDrive = mode.hardwareMap.get(DcMotor.class, "rightBack");
-            rightFrontDrive = mode.hardwareMap.get(DcMotor.class, "rightFront");
-
-            par0 = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
-            par1 = mode.hardwareMap.get(DcMotorEx.class, "rightBack");
-            perp = mode.hardwareMap.get(DcMotorEx.class, "rightFront");
-
-            leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-            par0.setDirection(DcMotorSimple.Direction.REVERSE);
-            par1.setDirection(DcMotorSimple.Direction.REVERSE);
-            perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
@@ -123,11 +110,10 @@ public class AprilTagYay
             double headingError = desiredTag.ftcPose.bearing;
             double yawError = desiredTag.ftcPose.yaw;
 
-            // TODO: if we are within range, heading, yaw tolerance then break;
-            //if(within range, heading, yaw tolerance) {
-            //    navigationSuccess = true;
-            //    break;
-            //}
+            if(Math.abs(rangeError) < 1.0 && Math.abs(headingError) < 5 && Math.abs(yawError) < 1.0) {
+                navigationSuccess = true;
+                break;
+            }
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
             drive = -1.0 * Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
@@ -179,10 +165,10 @@ public class AprilTagYay
         }
 
         // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        hardware.leftFront.setPower(leftFrontPower);
+        hardware.rightFront.setPower(rightFrontPower);
+        hardware.leftBack.setPower(leftBackPower);
+        hardware.rightBack.setPower(rightBackPower);
     }
 
     /**

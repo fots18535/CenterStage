@@ -8,56 +8,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class HunkOfMetal {
-    DcMotor leftBack;
-    DcMotor leftFront; 
-    DcMotor rightBack;
-    DcMotor rightFront;
-    DcMotorEx par0, par1, perp;
-
-    Gyro2 gyro;
     LinearOpMode mode;
 
     float ticksPerInch = 1870.57918f;
     float gyroCorrection = -0.04f;
     float slideTicksPerInch = 1870.57918f;
 
-    public HunkOfMetal(LinearOpMode op) {
+    Hardware hardware;
+
+    public HunkOfMetal(LinearOpMode op, Hardware hw) {
         mode = op;
-    }
-
-    public void initialize() {
-        BNO055IMU imu = mode.hardwareMap.get(BNO055IMU.class, "imu");
-        gyro = new Gyro2(imu, mode);
-
-        leftBack = mode.hardwareMap.get(DcMotor.class, "leftBack");
-        leftFront = mode.hardwareMap.get(DcMotor.class, "leftFront");
-        rightBack = mode.hardwareMap.get(DcMotor.class, "rightBack");
-        rightFront = mode.hardwareMap.get(DcMotor.class, "rightFront");
-
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        par0 = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
-        par1 = mode.hardwareMap.get(DcMotorEx.class, "rightBack");
-        perp = mode.hardwareMap.get(DcMotorEx.class, "rightFront");
-        par0.setDirection(DcMotorSimple.Direction.REVERSE);
-        par1.setDirection(DcMotorSimple.Direction.REVERSE);
-        perp.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Reset the encoder to 0
-        par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        par1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        par1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        perp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        perp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        gyro.startGyro();
+        hardware = hw;
     }
 
     public double ramp(double power, long startTime) {
@@ -74,27 +35,27 @@ public class HunkOfMetal {
     // Negative power slides right
     public void chaChaRealSmooth(double power, double length) {
         // Reset the encoder to 0
-        perp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.perp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Tells the motor to run until we turn it off
-        perp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.perp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Slide until encoder ticks are sufficient
-        gyro.reset();
+        hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
         while (mode.opModeIsActive()) {
             //absolute value of getCurrentPosition()
-            int tics = perp.getCurrentPosition();
+            int tics = hardware.perp.getCurrentPosition();
             if (tics < 0) {
                 tics = tics * -1;
             }
 
             double rpower = ramp(power, startTime);
-            float rightX = -1 * gyroCorrection * (float) gyro.getAngle();
-            leftBack.setPower(rightX - rpower);
-            leftFront.setPower(rightX + rpower);
-            rightBack.setPower(rightX - rpower);
-            rightFront.setPower(rightX + rpower);
+            float rightX = -1 * gyroCorrection * (float) hardware.gyro.getAngle();
+            hardware.leftBack.setPower(rightX - rpower);
+            hardware.leftFront.setPower(rightX + rpower);
+            hardware.rightBack.setPower(rightX - rpower);
+            hardware.rightFront.setPower(rightX + rpower);
 
             if (tics > length * slideTicksPerInch) {
                 break;
@@ -103,26 +64,26 @@ public class HunkOfMetal {
         }
 
         // Turn off motors
-        leftBack.setPower(0);
-        leftFront.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        hardware.leftBack.setPower(0);
+        hardware.leftFront.setPower(0);
+        hardware.rightBack.setPower(0);
+        hardware.rightFront.setPower(0);
     }
 
     public void forward(double power, double length) {
         // Reset the encoder to 0
-        par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Tells the motor to run until we turn it off
-        par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        gyro.reset();
+        hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
 
         // Go forward until tics reached
         while (mode.opModeIsActive()) {
 
             //absolute value of getCurrentPosition()
-            int tics = par0.getCurrentPosition();
+            int tics = hardware.par0.getCurrentPosition();
             if (tics < 0) {
                 tics = tics * -1;
             }
@@ -135,11 +96,11 @@ public class HunkOfMetal {
 
             // Get the angle and adjust the power to correct
             double rpower = ramp(power, startTime);
-            float rightX = -1 * gyroCorrection * (float) gyro.getAngle();
-            leftBack.setPower(rightX - rpower);
-            leftFront.setPower(rightX - rpower);
-            rightBack.setPower(rightX + rpower);
-            rightFront.setPower(rightX + rpower);
+            float rightX = -1 * gyroCorrection * (float) hardware.gyro.getAngle();
+            hardware.leftBack.setPower(rightX - rpower);
+            hardware.leftFront.setPower(rightX - rpower);
+            hardware.rightBack.setPower(rightX + rpower);
+            hardware.rightFront.setPower(rightX + rpower);
 
             mode.idle();
         }
@@ -148,7 +109,7 @@ public class HunkOfMetal {
     }
 
     public void forward(double power, Stopper stopper) {
-        gyro.reset();
+        hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
 
         // Go forward until stopper stops
@@ -161,11 +122,11 @@ public class HunkOfMetal {
 
             // Get the angle and adjust the power to correct
             double rpower = ramp(power, startTime);
-            float rightX = -1 * gyroCorrection * (float) gyro.getAngle();
-            leftBack.setPower(rightX - rpower);
-            leftFront.setPower(rightX - rpower);
-            rightBack.setPower(rightX + rpower);
-            rightFront.setPower(rightX + rpower);
+            float rightX = -1 * gyroCorrection * (float) hardware.gyro.getAngle();
+            hardware.leftBack.setPower(rightX - rpower);
+            hardware.leftFront.setPower(rightX - rpower);
+            hardware.rightBack.setPower(rightX + rpower);
+            hardware.rightFront.setPower(rightX + rpower);
 
             mode.idle();
         }
@@ -175,52 +136,52 @@ public class HunkOfMetal {
 
     public void turnLeft(double howFar, double speed) {
         //gyro.resetWithDirection(Gyro.RIGHT);
-        gyro.reset();
-        leftBack.setPower(-speed);
-        leftFront.setPower(-speed);
-        rightBack.setPower(-speed);
-        rightFront.setPower(-speed);
+        hardware.gyro.reset();
+        hardware.leftBack.setPower(-speed);
+        hardware.leftFront.setPower(-speed);
+        hardware.rightBack.setPower(-speed);
+        hardware.rightFront.setPower(-speed);
 
         // Go forward and park behind the line
         while (mode.opModeIsActive()) {
-            if (gyro.getAngle() >= howFar) { //change
+            if (hardware.gyro.getAngle() >= howFar) { //change
                 break;
             }
-            mode.telemetry.addData("angle", gyro.getAngle());
+            mode.telemetry.addData("angle", hardware.gyro.getAngle());
             mode.telemetry.update();
 
             mode.idle();
         }
 
-        leftBack.setPower(0);
-        leftFront.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        hardware.leftBack.setPower(0);
+        hardware.leftFront.setPower(0);
+        hardware.rightBack.setPower(0);
+        hardware.rightFront.setPower(0);
     }
 
     public void turnRight(double howFar, double speed) {
         //gyro.resetWithDirection(Gyro.LEFT);
-        gyro.reset();
-        leftBack.setPower(speed);
-        leftFront.setPower(speed);
-        rightBack.setPower(speed);
-        rightFront.setPower(speed);
+        hardware.gyro.reset();
+        hardware.leftBack.setPower(speed);
+        hardware.leftFront.setPower(speed);
+        hardware.rightBack.setPower(speed);
+        hardware.rightFront.setPower(speed);
 
         // Go forward and park behind the line
         while (mode.opModeIsActive()) {
-            if (gyro.getAngle() <= -howFar) {
+            if (hardware.gyro.getAngle() <= -howFar) {
                 break;
             }
-            mode.telemetry.addData("angle", gyro.getAngle());
+            mode.telemetry.addData("angle", hardware.gyro.getAngle());
             mode.telemetry.update();
 
             mode.idle();
         }
 
-        leftBack.setPower(0);
-        leftFront.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        hardware.leftBack.setPower(0);
+        hardware.leftFront.setPower(0);
+        hardware.rightBack.setPower(0);
+        hardware.rightFront.setPower(0);
     }
 
     public int tickYeah(DcMotor motor) {
@@ -233,10 +194,23 @@ public class HunkOfMetal {
     }
 
     public void stopMotors() {
-        leftFront.setPower(0.0);
-        rightBack.setPower(0.0);
-        rightFront.setPower(0.0);
-        leftBack.setPower(0.0);
+        hardware.leftFront.setPower(0.0);
+        hardware.rightBack.setPower(0.0);
+        hardware.rightFront.setPower(0.0);
+        hardware.leftBack.setPower(0.0);
+    }
+
+    public void raiseArm(){
+        hardware.arm.setPower(.5);
+        while(!hardware.armStop.isPressed()){}
+        hardware.arm.setPower(0);
+    }
+
+    public void lowerArm(){
+        int start = hardware.arm.getCurrentPosition();
+        hardware.arm.setPower(-0.5);
+        while(Math.abs(start - hardware.arm.getCurrentPosition()) < 50){}
+        hardware.arm.setPower(0);
     }
 }
 

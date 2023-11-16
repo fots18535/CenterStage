@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.vision.AprilTagYay;
 import org.firstinspires.ftc.teamcode.vision.Detector;
 import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
@@ -11,8 +12,12 @@ public class BlueBoardAuto extends LinearOpMode{
         @Override
         public void runOpMode() throws InterruptedException {
         //figure out where the icon is located on the field.
+                Hardware hardware = new Hardware(this);
+                hardware.initialize();
                 Detector locationId = new Detector(this);
-                HunkOfMetal hunk = new HunkOfMetal(this);
+                HunkOfMetal hunk = new HunkOfMetal(this, hardware);
+                AprilTagYay april = new AprilTagYay(this, hardware);
+                april.initializes();
                 locationId.start();
                 IconPosition icon = locationId.getPosition();
 
@@ -39,9 +44,12 @@ public class BlueBoardAuto extends LinearOpMode{
                 }
 
         // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
-
-
+                april.align();
+                hunk.raiseArm();
+                sleep(2000);
+                hunk.lowerArm();
         //park in the backstage
+                hunk.chaChaRealSmooth(1,23);
         }
 
 
