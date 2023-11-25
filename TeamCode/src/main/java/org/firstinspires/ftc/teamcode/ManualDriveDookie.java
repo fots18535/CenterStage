@@ -28,6 +28,11 @@ public class ManualDriveDookie extends LinearOpMode {
 
         waitForStart();
 
+        // Reset the encoder to 0
+        hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // Tells the motor to run until we turn it off
+        hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         while (opModeIsActive()) {
 
             telemetry.addData("par0", hardware.par0.getCurrentPosition());
@@ -59,10 +64,13 @@ public class ManualDriveDookie extends LinearOpMode {
             hardware.rightFront.setPower(rightX - rightY - leftX);
 
     //touch sensor for the arm
-            if(gamepad2.dpad_up && !hardware.armStop.isPressed()){
-                hardware.arm.setPower(0.5);
+            if(gamepad2.dpad_up){
+                armSetter(195);
             }else if(gamepad2.dpad_down) {
-                hardware.arm.setPower(-0.5);
+                armSetter(0);
+            }else if(gamepad2.dpad_right)
+            {
+                armSetter(257);
             }else{
                 hardware.arm.setPower(0);
             }
@@ -78,9 +86,9 @@ public class ManualDriveDookie extends LinearOpMode {
 
     //linear slide motor
             if(gamepad2.cross){
-                hardware.slide.setPower(0.3);
+                hardware.slide.setPower(0.7);
             }else if(gamepad2.triangle){
-                hardware.slide.setPower(-0.3);
+                hardware.slide.setPower(-0.7);
             }else{
                 hardware.slide.setPower(0);
             }
@@ -92,5 +100,32 @@ public class ManualDriveDookie extends LinearOpMode {
             }
 
         }
+    }
+
+    private void armSetter(int tics)
+    {
+        int current = hardware.arm.getCurrentPosition();
+        int difference = tics - current;
+        if(difference < 0)
+        {
+            hardware.arm.setPower(-0.4);
+            while(opModeIsActive() && hardware.arm.getCurrentPosition() > tics)
+            {
+                telemetry.addData("arm pause",hardware.arm.getCurrentPosition());
+                telemetry.addData("tics",tics);
+                telemetry.update();
+            }
+        }
+        else
+        {
+            hardware.arm.setPower(0.4);
+            while(opModeIsActive() && hardware.arm.getCurrentPosition() < tics)
+            {
+                telemetry.addData("arm pause",hardware.arm.getCurrentPosition());
+                telemetry.addData("tics",tics);
+                telemetry.update();
+            }
+        }
+        hardware.arm.setPower(0);
     }
 }
