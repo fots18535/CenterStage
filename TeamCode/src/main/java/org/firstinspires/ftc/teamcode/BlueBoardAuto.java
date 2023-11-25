@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.vision.AprilTagYay;
 import org.firstinspires.ftc.teamcode.vision.Detector;
 import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
-
+@Autonomous
 public class BlueBoardAuto extends LinearOpMode{
 
         @Override
@@ -21,35 +22,35 @@ public class BlueBoardAuto extends LinearOpMode{
                 locationId.start();
                 IconPosition icon = locationId.getPosition();
 
-                hunk.forward(1, 23);
+                hunk.forward(0.5, 23);
 
         //place pixel on same line of tape as icon
                 if(icon == IconPosition.LEFT){
                       //deliver pixel to left tape line
-                        hunk.chaChaRealSmooth(1, 11);
+                        hunk.chaChaRealSmooth(-0.5, 11);
                         hunk.turnLeft(90, .5);
-                        hunk.forward(1, 23);
+                        hunk.forward(0.5, 23);
                 }else if(icon == IconPosition.CENTER){
                       //deliver pixel to center tape line
-                        hunk.forward(1, 11);
+                        hunk.forward(0.5, 11);
                         hunk.turnLeft(90, .5);
-                        hunk.forward(1, 34);
+                        hunk.forward(0.5, 34);
 
                 }else{
                       //deliver pixel to right tape line
-                        hunk.chaChaRealSmooth(-1, 11);
+                        hunk.chaChaRealSmooth(0.5, 11);
                         hunk.turnLeft(90, .5);
-                        hunk.forward(1, 46);
+                        hunk.forward(0.5, 46);
 
                 }
 
         // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
-                april.align();
-                hunk.raiseArm();
-                sleep(2000);
-                hunk.lowerArm();
+                //april.align();
+                //hunk.raiseArm();
+                //sleep(2000);
+                //hunk.lowerArm();
         //park in the backstage
-                hunk.chaChaRealSmooth(1,23);
+                hunk.chaChaRealSmooth(0.5,23);
         }
 
 

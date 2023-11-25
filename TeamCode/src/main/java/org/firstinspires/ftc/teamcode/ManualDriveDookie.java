@@ -84,6 +84,13 @@ public class ManualDriveDookie extends LinearOpMode {
             }else{
                 hardware.slide.setPower(0);
             }
+
+      //airplane
+            if(gamepad2.right_bumper)
+            {
+                hardware.airplane.setPosition(180);
+            }
+
         }
     }
 }

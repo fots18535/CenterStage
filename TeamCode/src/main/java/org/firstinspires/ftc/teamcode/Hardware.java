@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Hardware {
@@ -20,6 +21,8 @@ public class Hardware {
     public DcMotor slide;
     public Gyro2 gyro;
     LinearOpMode mode;
+
+    public Servo airplane;
 
     public Hardware(LinearOpMode op) {
         mode = op;
@@ -61,6 +64,7 @@ public class Hardware {
         armStop = mode.hardwareMap.get(TouchSensor.class, "armStop");
         intakeMotor = mode.hardwareMap.get(DcMotor.class, "intakeMotor");
         slide = mode.hardwareMap.get(DcMotor.class, "slide");
+        airplane = mode.hardwareMap.get(Servo.class,"airplane");
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
