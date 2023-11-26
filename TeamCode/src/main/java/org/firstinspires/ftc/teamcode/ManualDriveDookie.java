@@ -79,8 +79,11 @@ public class ManualDriveDookie extends LinearOpMode {
             // TODO: every cycle through the loop check if we are at or near the target
             // TODO: if we are too far then reverse the motor
             // TODO: if we are not far enough keep the motor going
-            // TODO: scale the power going to the motor based on the difference between current position and target
             // TODO: make sure the linear slide is all the way in before going to 0
+            // TODO: scale the power going to the motor based on the difference between current position and target
+            //       y = mx + b
+            //       when diff = -30 then power = 0.4; when diff = 0 power = 0; when diff = 30 then power = -0.4
+            //       points: (-30, 0.4), (0, 0), (30, -0.4) - what is the equation?
 
             /*****************************/
             /** INTAKE MOTOR SECTION    **/
