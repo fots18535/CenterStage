@@ -30,7 +30,6 @@ public class ManualDriveDookie extends LinearOpMode {
 
         // Reset the encoder to 0
         hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Tells the motor to run until we turn it off
         hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while (opModeIsActive()) {
@@ -63,7 +62,10 @@ public class ManualDriveDookie extends LinearOpMode {
             hardware.rightBack.setPower(rightX - rightY + leftX);
             hardware.rightFront.setPower(rightX - rightY - leftX);
 
-    //touch sensor for the arm
+            /*****************************/
+            /** ARM UP AND DOWN SECTION **/
+            /*****************************/
+            // TODO: use a variable to keep track of what the target position is
             if(gamepad2.dpad_up){
                 armSetter(195);
             }else if(gamepad2.dpad_down) {
@@ -74,8 +76,15 @@ public class ManualDriveDookie extends LinearOpMode {
             }else{
                 hardware.arm.setPower(0);
             }
+            // TODO: every cycle through the loop check if we are at or near the target
+            // TODO: if we are too far then reverse the motor
+            // TODO: if we are not far enough keep the motor going
+            // TODO: scale the power going to the motor based on the difference between current position and target
+            // TODO: make sure the linear slide is all the way in before going to 0
 
-    //intake motor
+            /*****************************/
+            /** INTAKE MOTOR SECTION    **/
+            /*****************************/
             if(gamepad2.circle){
                 hardware.intakeMotor.setPower(1);
             }else if(gamepad2.square){
@@ -84,7 +93,10 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.intakeMotor.setPower(0);
             }
 
-    //linear slide motor
+            /*****************************/
+            /** LINEAR SLIDE SECTION    **/
+            /*****************************/
+            // TODO: need to set encoder limits to not over / under extend the slide
             if(gamepad2.cross){
                 hardware.slide.setPower(0.7);
             }else if(gamepad2.triangle){
@@ -93,7 +105,9 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.slide.setPower(0);
             }
 
-      //airplane
+            /*****************************/
+            /** AIRPLANE SECTION        **/
+            /*****************************/
             if(gamepad2.right_bumper)
             {
                 hardware.airplane.setPosition(180);
