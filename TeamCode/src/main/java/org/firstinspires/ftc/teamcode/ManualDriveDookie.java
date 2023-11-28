@@ -31,7 +31,8 @@ public class ManualDriveDookie extends LinearOpMode {
         // Reset the encoder to 0
         hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        int armTargetTics = 0;
+        int armTargetState = 0;
         while (opModeIsActive()) {
 
             telemetry.addData("par0", hardware.par0.getCurrentPosition());
@@ -66,16 +67,59 @@ public class ManualDriveDookie extends LinearOpMode {
             /** ARM UP AND DOWN SECTION **/
             /*****************************/
             // TODO: use a variable to keep track of what the target position is
-            if(gamepad2.dpad_up){
-                armSetter(195);
+            if(gamepad2.dpad_up) {
+                armTargetState = 1; // vertical
             }else if(gamepad2.dpad_down) {
-                armSetter(0);
-            }else if(gamepad2.dpad_right)
-            {
-                armSetter(257);
-            }else{
-                hardware.arm.setPower(0);
+                armTargetState = 0; // down
+            }else if(gamepad2.dpad_right) {
+                armTargetState = 3; // full forward
+                armTargetTics = 257;
             }
+
+            if(armTargetState == 1) {
+                // make sure the arm if fully in before raising from ground (state 2)
+                if(hardware.armStop.isPressed() || hardware.arm.getCurrentPosition() >= 100) {
+                    hardware.slide.setPower(0);
+                    armTargetTics = 195;
+                    armTargetState = 2;
+                } else {
+                    hardware.slide.setPower(0.7); // down
+                }
+
+            }
+
+            if(armTargetState == 2 && hardware.arm.getCurrentPosition() < 100) {
+                // keep the arm in while raising past the wheels
+                if(hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(0);
+                } else {
+                    hardware.slide.setPower(0.7); // down
+                }
+            }
+
+            if(armTargetState == 0) {
+                // make sure the arm is fully in before lowering to ground
+                if(!hardware.armStop.isPressed()) {
+                    armTargetTics = 100;
+                    hardware.slide.setPower(0.7); // down
+                } else {
+                    hardware.slide.setPower(0);
+                    armTargetTics = 0;
+                    armTargetState = -1;
+                }
+            }
+
+            if(armTargetState == -1) {
+                // keep the arm in while lowering past wheels
+                if(hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(0);
+                } else {
+                    hardware.slide.setPower(0.7); // down
+                }
+            }
+
+            hardware.arm.setPower(getArmPower(hardware.arm.getCurrentPosition(), armTargetTics));
+
             // TODO: every cycle through the loop check if we are at or near the target
             // TODO: if we are too far then reverse the motor
             // TODO: if we are not far enough keep the motor going
@@ -100,9 +144,11 @@ public class ManualDriveDookie extends LinearOpMode {
             /** LINEAR SLIDE SECTION    **/
             /*****************************/
             // TODO: need to set encoder limits to not over / under extend the slide
-            if(gamepad2.cross){
+            if(gamepad2.cross && !hardware.armStop.isPressed()){
+                // down
                 hardware.slide.setPower(0.7);
             }else if(gamepad2.triangle){
+                // up
                 hardware.slide.setPower(-0.7);
             }else{
                 hardware.slide.setPower(0);
@@ -117,6 +163,18 @@ public class ManualDriveDookie extends LinearOpMode {
             }
 
         }
+    }
+
+    private double getArmPower(int currentTic, int targetTic) {
+        double power = -0.0133 * (currentTic - targetTic);
+
+        if(power < 0) {
+            power = Math.max(power, -0.4);
+        } else {
+            power = Math.min(power, 0.4);
+        }
+
+        return power;
     }
 
     private void armSetter(int tics)
