@@ -17,6 +17,7 @@ public class BlueBoardAuto extends LinearOpMode{
                 hardware.initialize();
 
                 Detector locationId = new Detector(this);
+                // TODO: we need to be able to pass in HSV upper and lower values for red and blue elements
                 locationId.start();
                 sleep(2000);
                 IconPosition icon = locationId.getPosition();

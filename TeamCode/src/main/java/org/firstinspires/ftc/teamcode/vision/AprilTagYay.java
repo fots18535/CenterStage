@@ -152,11 +152,14 @@ public class AprilTagYay
         // rightX = turn = yaw
         // rightY = drive = x
         // leftX = strafe = y
+
+        // if we are driving forward
 //        double leftFrontPower    =  yaw + x - y;
 //        double rightFrontPower   =  yaw - x - y;
 //        double leftBackPower     =  yaw + x + y;
 //        double rightBackPower    =  yaw - x + y;
 
+        // since we are driving in reverse...
         double leftFrontPower    =  yaw - x + y;
         double rightFrontPower   =  yaw + x + y;
         double leftBackPower     =  yaw - x - y;
