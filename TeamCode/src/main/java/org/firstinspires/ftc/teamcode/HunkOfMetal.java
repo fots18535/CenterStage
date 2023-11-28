@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class HunkOfMetal {
     LinearOpMode mode;
 
+
     float ticksPerInch = 1870.57918f;
     float gyroCorrection = -0.04f;
     float slideTicksPerInch = 1870.57918f;
@@ -72,9 +73,9 @@ public class HunkOfMetal {
 
     public void forward(double power, double length) {
         // Reset the encoder to 0
-        hardware.par0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.par1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Tells the motor to run until we turn it off
-        hardware.par0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.par1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
@@ -83,7 +84,7 @@ public class HunkOfMetal {
         while (mode.opModeIsActive()) {
 
             //absolute value of getCurrentPosition()
-            int tics = hardware.par0.getCurrentPosition();
+            int tics = hardware.par1.getCurrentPosition();
             if (tics < 0) {
                 tics = tics * -1;
             }

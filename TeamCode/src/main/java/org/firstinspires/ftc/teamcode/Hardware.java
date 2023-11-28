@@ -45,9 +45,14 @@ public class Hardware {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        par0 = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
+//        par0 = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
+//        par1 = mode.hardwareMap.get(DcMotorEx.class, "rightBack");
+//        perp = mode.hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        perp = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
         par1 = mode.hardwareMap.get(DcMotorEx.class, "rightBack");
-        perp = mode.hardwareMap.get(DcMotorEx.class, "rightFront");
+        par0 = mode.hardwareMap.get(DcMotorEx.class, "rightFront");
+
         par0.setDirection(DcMotorSimple.Direction.REVERSE);
         par1.setDirection(DcMotorSimple.Direction.REVERSE);
         perp.setDirection(DcMotorSimple.Direction.REVERSE);

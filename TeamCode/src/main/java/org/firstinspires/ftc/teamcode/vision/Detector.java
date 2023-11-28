@@ -96,8 +96,8 @@ public class Detector {
         Point rl;
 
         // HSV threshold values
-        Scalar lower = new Scalar(104,152,95);
-        Scalar upper = new Scalar(118,255,255);
+        Scalar lower = new Scalar(77,169,75);
+        Scalar upper = new Scalar(140,243,255);
 
         /*
          * Working variables

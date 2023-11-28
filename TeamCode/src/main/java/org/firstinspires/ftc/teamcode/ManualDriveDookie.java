@@ -32,7 +32,7 @@ public class ManualDriveDookie extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         int armTargetTics = 0;
-        int armTargetState = 0;
+        int armTargetState = -1;
         while (opModeIsActive()) {
 
             telemetry.addData("par0", hardware.par0.getCurrentPosition());
@@ -72,49 +72,36 @@ public class ManualDriveDookie extends LinearOpMode {
             }else if(gamepad2.dpad_down) {
                 armTargetState = 0; // down
             }else if(gamepad2.dpad_right) {
-                armTargetState = 3; // full forward
-                armTargetTics = 257;
+                armTargetState = 2; // full forward
             }
 
             if(armTargetState == 1) {
-                // make sure the arm if fully in before raising from ground (state 2)
-                if(hardware.armStop.isPressed() || hardware.arm.getCurrentPosition() >= 100) {
-                    hardware.slide.setPower(0);
-                    armTargetTics = 195;
-                    armTargetState = 2;
+                armTargetTics = 195;
+                if(hardware.arm.getCurrentPosition() > (armTargetTics - 15)) {
+                    hardware.intakeMotor.setPower(0);
+                    armTargetState = -1;
                 } else {
-                    hardware.slide.setPower(0.7); // down
+                    hardware.intakeMotor.setPower(-0.5);
                 }
-
             }
 
-            if(armTargetState == 2 && hardware.arm.getCurrentPosition() < 100) {
-                // keep the arm in while raising past the wheels
-                if(hardware.armStop.isPressed()) {
-                    hardware.slide.setPower(0);
+            if(armTargetState == 2) {
+                armTargetTics = 257;
+                if(hardware.arm.getCurrentPosition() > (armTargetTics - 15)) {
+                    hardware.intakeMotor.setPower(0);
+                    armTargetState = -1;
                 } else {
-                    hardware.slide.setPower(0.7); // down
+                    hardware.intakeMotor.setPower(-0.5);
                 }
             }
 
             if(armTargetState == 0) {
-                // make sure the arm is fully in before lowering to ground
-                if(!hardware.armStop.isPressed()) {
-                    armTargetTics = 100;
-                    hardware.slide.setPower(0.7); // down
-                } else {
-                    hardware.slide.setPower(0);
-                    armTargetTics = 0;
+                armTargetTics = 0;
+                if(hardware.arm.getCurrentPosition() < (armTargetTics + 15)) {
+                    hardware.intakeMotor.setPower(0);
                     armTargetState = -1;
-                }
-            }
-
-            if(armTargetState == -1) {
-                // keep the arm in while lowering past wheels
-                if(hardware.armStop.isPressed()) {
-                    hardware.slide.setPower(0);
                 } else {
-                    hardware.slide.setPower(0.7); // down
+                    hardware.intakeMotor.setPower(0.5);
                 }
             }
 
@@ -133,9 +120,9 @@ public class ManualDriveDookie extends LinearOpMode {
             /** INTAKE MOTOR SECTION    **/
             /*****************************/
             if(gamepad2.circle){
-                hardware.intakeMotor.setPower(1);
+                hardware.intakeMotor.setPower(0.8); // push out
             }else if(gamepad2.square){
-                hardware.intakeMotor.setPower(-1);
+                hardware.intakeMotor.setPower(-0.8); // pull in
             }else{
                 hardware.intakeMotor.setPower(0);
             }
@@ -159,19 +146,28 @@ public class ManualDriveDookie extends LinearOpMode {
             /*****************************/
             if(gamepad2.right_bumper)
             {
-                hardware.airplane.setPosition(180);
+                hardware.airplane.setPosition(1);
+            } else {
+                hardware.airplane.setPosition(0);
             }
 
         }
     }
 
     private double getArmPower(int currentTic, int targetTic) {
-        double power = -0.0133 * (currentTic - targetTic);
+        int difference = currentTic - targetTic;
+        double power = -0.0133 * difference;
+
+        // don't slam the arm when it is already moving down
+        double maxPower = 0.4;
+        if(difference > 0 && hardware.arm.getCurrentPosition() < 195) {
+            maxPower = 0.2;
+        }
 
         if(power < 0) {
-            power = Math.max(power, -0.4);
+            power = Math.max(power, -maxPower);
         } else {
-            power = Math.min(power, 0.4);
+            power = Math.min(power, maxPower);
         }
 
         return power;

@@ -6,23 +6,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Hardware;
+
 @TeleOp
 public class EncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotorEx par0 = hardwareMap.get(DcMotorEx.class, "leftBack");
-        DcMotorEx par1 = hardwareMap.get(DcMotorEx.class, "rightBack");
-        DcMotorEx perp = hardwareMap.get(DcMotorEx.class, "rightFront");
-        par1.setDirection(DcMotorSimple.Direction.REVERSE);
-        perp.setDirection(DcMotorSimple.Direction.REVERSE);
+        Hardware hardware = new Hardware(this);
+        hardware.initialize();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("par0", par0.getCurrentPosition());
-            telemetry.addData("par1", par1.getCurrentPosition());
-            telemetry.addData("perp", perp.getCurrentPosition());
+            telemetry.addData("par0", hardware.par0.getCurrentPosition());
+            telemetry.addData("par1", hardware.par1.getCurrentPosition());
+            telemetry.addData("perp", hardware.perp.getCurrentPosition());
             telemetry.update();
         }
     }

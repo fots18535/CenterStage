@@ -71,6 +71,7 @@ public class AprilTagYay
 
         while (mode.opModeIsActive()) {
             desiredTag = null;
+            targetFound = false;
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -95,37 +96,41 @@ public class AprilTagYay
 
             // Tell the driver what we see, and what to do.
             if (targetFound) {
-                mode.telemetry.addData("\n>", "HOLD Left-Bumper to Drive to Target\n");
+//                mode.telemetry.addData("\n>", "HOLD Left-Bumper to Drive to Target\n");
                 mode.telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
                 mode.telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
                 mode.telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
                 mode.telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+
+                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                double headingError = desiredTag.ftcPose.bearing;
+                double yawError = desiredTag.ftcPose.yaw;
+
+                if(Math.abs(rangeError) < 1.0 && Math.abs(headingError) < 5 && Math.abs(yawError) < 1.0) {
+                    navigationSuccess = true;
+                    break;
+                }
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive = -1.0 * Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+                turn = -1.0 * Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
+                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+                mode.telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                mode.telemetry.update();
+
+                // Apply desired axes motions to the drivetrain.
+                moveRobot(drive, strafe, turn);
+                mode.sleep(10);
             } else {
                 // TODO: should we search for the target for a bit?
-                break;
+                hardware.leftFront.setPower(0);
+                hardware.rightFront.setPower(0);
+                hardware.leftBack.setPower(0);
+                hardware.rightBack.setPower(0);
+                mode.sleep(10);
             }
-
-            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            double headingError = desiredTag.ftcPose.bearing;
-            double yawError = desiredTag.ftcPose.yaw;
-
-            if(Math.abs(rangeError) < 1.0 && Math.abs(headingError) < 5 && Math.abs(yawError) < 1.0) {
-                navigationSuccess = true;
-                break;
-            }
-
-            // Use the speed and turn "gains" to calculate how we want the robot to move.
-            drive = -1.0 * Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            turn = -1.0 * Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-            mode.telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            mode.telemetry.update();
-
-            // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
-            mode.sleep(10);
         }
 
         return navigationSuccess;
@@ -147,10 +152,15 @@ public class AprilTagYay
         // rightX = turn = yaw
         // rightY = drive = x
         // leftX = strafe = y
-        double leftFrontPower    =  yaw + x - y;
-        double rightFrontPower   =  yaw - x - y;
-        double leftBackPower     =  yaw + x + y;
-        double rightBackPower    =  yaw - x + y;
+//        double leftFrontPower    =  yaw + x - y;
+//        double rightFrontPower   =  yaw - x - y;
+//        double leftBackPower     =  yaw + x + y;
+//        double rightBackPower    =  yaw - x + y;
+
+        double leftFrontPower    =  yaw - x + y;
+        double rightFrontPower   =  yaw + x + y;
+        double leftBackPower     =  yaw - x - y;
+        double rightBackPower    =  yaw + x - y;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
