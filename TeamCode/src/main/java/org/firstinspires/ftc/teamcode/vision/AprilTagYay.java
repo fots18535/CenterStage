@@ -62,7 +62,7 @@ public class AprilTagYay
             mode.telemetry.update();
         }
 
-    public boolean align(){
+    public boolean align(int tagId){
         boolean navigationSuccess = false;
         boolean targetFound = false;    // Set to true when an AprilTag target is detected
         double drive = 0;               // Desired forward power/speed (-1 to +1)
@@ -79,7 +79,7 @@ public class AprilTagYay
                 // Look to see if we have size info on this tag.
                 if (detection.metadata != null) {
                     //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
+                    if ((detection.id == tagId)) {
                         // Yes, we want to use this tag.
                         targetFound = true;
                         desiredTag = detection;

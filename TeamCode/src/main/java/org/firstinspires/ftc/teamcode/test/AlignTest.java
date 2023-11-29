@@ -18,7 +18,7 @@ public class AlignTest extends LinearOpMode {
 
         waitForStart();
 
-        april.align();
+        april.align(2);
 
     }
 }

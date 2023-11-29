@@ -15,21 +15,27 @@ public class BlueBoardAuto extends LinearOpMode{
         //figure out where the icon is located on the field.
                 Hardware hardware = new Hardware(this);
                 hardware.initialize();
+                double[] minHsv = {1,2,3};
+                double[] maxHsv = {1,2,3};
+                int targetTag = 2;
 
                 Detector locationId = new Detector(this);
-                // TODO: we need to be able to pass in HSV upper and lower values for red and blue elements
+                locationId.setHsvLimits(minHsv, maxHsv);
                 locationId.start();
                 sleep(2000);
                 IconPosition icon = locationId.getPosition();
                 switch (icon) {
                         case LEFT:
                                 telemetry.addData("Position", "Left");
+                                targetTag = 1;
                                 break;
                         case CENTER:
                                 telemetry.addData("Position", "Center");
+                                targetTag = 2;
                                 break;
                         case RIGHT:
                                 telemetry.addData("Position", "Right");
+                                targetTag = 3;
                                 break;
                         default:
                                 telemetry.addData("Position", "unknown");
@@ -67,7 +73,7 @@ public class BlueBoardAuto extends LinearOpMode{
 //                }
 
         // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
-                april.align();
+                april.align(targetTag);
                 //hunk.raiseArm();
                 //sleep(2000);
                 //hunk.lowerArm();

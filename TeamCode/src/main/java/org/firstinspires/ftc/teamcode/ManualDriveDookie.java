@@ -89,12 +89,34 @@ public class ManualDriveDookie extends LinearOpMode {
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
 
+            if(armTargetState == 0)
+            {
+                armTargetTics = 0;
+                hardware.intakeMotor.setPower(0.5);
+                if(armTargetTics >= hardware.arm.getCurrentPosition())
+                {
+                    armTargetState = -1;
+                    hardware.intakeMotor.setPower(0);
+                }
+            }
+
             // TODO: code for target state 1: going to vertical position
             // if armTargetState == 1 then
             //    set armTargetTics = 195
             //    start the intake rollers and keep them on until close to target position
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
+
+            if(armTargetState == 1)
+            {
+                armTargetTics = 195;
+                hardware.intakeMotor.setPower(-0.5);
+                if(armTargetTics <= hardware.arm.getCurrentPosition())
+                {
+                    armTargetState = -1;
+                    hardware.intakeMotor.setPower(0);
+                }
+            }
 
             // TODO: code for target state 2: going to forward most position
             // if armTargetState == 2 then
@@ -103,11 +125,24 @@ public class ManualDriveDookie extends LinearOpMode {
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
 
+            if(armTargetState == 2)
+            {
+                armTargetTics = 255;
+                hardware.intakeMotor.setPower(-0.5);
+                if(armTargetTics <= hardware.arm.getCurrentPosition())
+                {
+                    armTargetState = -1;
+                    hardware.intakeMotor.setPower(0);
+                }
+            }
+
             // TODO: given current position and target position, get arm motor power from power equation
             //       scale the power going to the motor based on the difference between current position and target
             //       y = mx + b
             //       when diff = -30 then power = 0.4; when diff = 0 power = 0; when diff = 30 then power = -0.4
             //       points: (-30, 0.4), (0, 0), (30, -0.4) - what is the equation?
+
+            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
 
             /*****************************/
             /** INTAKE MOTOR SECTION    **/
@@ -137,9 +172,24 @@ public class ManualDriveDookie extends LinearOpMode {
             /*****************************/
             if(gamepad2.right_bumper) {
                 // TODO: servo range is 0 - 1
-                hardware.airplane.setPosition(180);
+                hardware.airplane.setPosition(1);
+            }
+            else{
+                hardware.airplane.setPosition(0);
             }
             // TODO: what is the servo position when the right bumper is not pushed?
         }
+    }
+
+    private double getArmPower(int targetPositon, int currentPosition){
+        int difference = currentPosition - targetPositon;
+        double y = -.013333333 * difference;
+        if(y < -0.4){
+            y = -0.4;
+        }
+        if(y > 0.4) {
+            y = 0.4;
+        }
+        return y;
     }
 }

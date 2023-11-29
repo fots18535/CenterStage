@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -23,6 +24,10 @@ public class Hardware {
     LinearOpMode mode;
 
     public Servo airplane;
+
+    //DistanceSensor lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
+    //DistanceSensor lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");
+
 
     public Hardware(LinearOpMode op) {
         mode = op;

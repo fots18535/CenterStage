@@ -69,6 +69,9 @@ public class Detector {
         return pipeline.getAnalysis();
     }
 
+    public void setHsvLimits(double[] min, double[] max){
+        pipeline.setHsvLimits(min, max);
+    }
     public static class IconDeterminationPipeline extends OpenCvPipeline
     {
 
@@ -117,6 +120,10 @@ public class Detector {
         private volatile IconPosition position = IconPosition.LEFT;
 
         // TODO: add method to set the upper and lower threshold values
+        public void setHsvLimits(double[] min, double[] max){
+            lower = new Scalar(min);
+            upper = new Scalar(max);
+        }
 
         @Override
         public void init(Mat firstFrame)
