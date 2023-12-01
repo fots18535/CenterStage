@@ -42,10 +42,10 @@ public class ManualDriveDookie extends LinearOpMode {
         int armTargetState = -1;
         while (opModeIsActive()) {
 
-            telemetry.addData("par0", hardware.par0.getCurrentPosition());
-            telemetry.addData("par1", hardware.par1.getCurrentPosition());
-            telemetry.addData("perp", hardware.perp.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("par0", hardware.par0.getCurrentPosition());
+//            telemetry.addData("par1", hardware.par1.getCurrentPosition());
+//            telemetry.addData("perp", hardware.perp.getCurrentPosition());
+//            telemetry.update();
 
             /*****************************/
             /** Driving Control Section **/
@@ -62,13 +62,37 @@ public class ManualDriveDookie extends LinearOpMode {
             double leftY = gamepad1.left_stick_y * slowSpeed;
             double rightX = gamepad1.right_stick_x * slowSpeed;
             double rightY = gamepad1.right_stick_y * slowSpeed;
-            double distance = 7.0;
+
+            if(gamepad1.right_bumper) {
+                // BOARD ALIGN
+                double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
+                double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
+
+                // (7, -0.4), (2, 0)
+                rightY = -1.0 * returnPower(Math.min(leftDist, rightDist));
+                rightX = (leftDist - rightDist) * 0.15 ;
+                if(rightX > 0.5) {
+                    rightX = 0.5;
+                } else if(rightX < -0.5) {
+                    rightX = -0.5;
+                }
+                leftX = 0.0;
+                telemetry.addData("rightX", rightX);
+                telemetry.addData("rightY", rightY);
+                telemetry.update();
 
 
-            hardware.leftBack.setPower(rightX + rightY + leftX);
-            hardware.leftFront.setPower(rightX + rightY - leftX);
-            hardware.rightBack.setPower(rightX - rightY + leftX);
-            hardware.rightFront.setPower(rightX - rightY - leftX);
+                hardware.leftBack.setPower(rightX + rightY + leftX);
+                hardware.leftFront.setPower(rightX + rightY - leftX);
+                hardware.rightBack.setPower(rightX - rightY + leftX);
+                hardware.rightFront.setPower(rightX - rightY - leftX);
+            } else {
+                // NORMAL CONTROL
+                hardware.leftBack.setPower(rightX + rightY + leftX);
+                hardware.leftFront.setPower(rightX + rightY - leftX);
+                hardware.rightBack.setPower(rightX - rightY + leftX);
+                hardware.rightFront.setPower(rightX - rightY - leftX);
+            }
 
             /*****************************/
             /** ARM UP AND DOWN SECTION **/
@@ -82,66 +106,71 @@ public class ManualDriveDookie extends LinearOpMode {
                 armTargetState = 2; // going to forward most position
             }
 
-            // TODO: code for target state 0: going to ground position
+            // Code for target state 0: going to ground position
             // if armTargetState == 0 then
             //    set armTargetTics = 0
             //    start the intake rollers and keep them on until close to target position
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
-
             if(armTargetState == 0)
             {
                 armTargetTics = 0;
-                hardware.intakeMotor.setPower(0.5);
                 if(armTargetTics >= hardware.arm.getCurrentPosition())
                 {
                     armTargetState = -1;
                     hardware.intakeMotor.setPower(0);
+                    hardware.slide.setPower(0);
+                } else {
+                    hardware.intakeMotor.setPower(0.5);
+                    //slideIn();
                 }
             }
 
-            // TODO: code for target state 1: going to vertical position
+            // Code for target state 1: going to vertical position
             // if armTargetState == 1 then
             //    set armTargetTics = 195
             //    start the intake rollers and keep them on until close to target position
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
-
             if(armTargetState == 1)
             {
                 armTargetTics = 195;
-                hardware.intakeMotor.setPower(-0.5);
                 if(armTargetTics <= hardware.arm.getCurrentPosition())
                 {
                     armTargetState = -1;
                     hardware.intakeMotor.setPower(0);
+                    hardware.slide.setPower(0);
+                } else {
+                    hardware.intakeMotor.setPower(-0.5);
+                    //slideIn();
                 }
             }
 
-            // TODO: code for target state 2: going to forward most position
+            // Code for target state 2: going to forward most position
             // if armTargetState == 2 then
             //    set armTargetTics = 255
             //    start the intake rollers and keep them on until close to target position
             //    turn off the intake rollers when at target
             //    set armTargetState = -1 when at target position
-
             if(armTargetState == 2)
             {
                 armTargetTics = 255;
-                hardware.intakeMotor.setPower(-0.5);
                 if(armTargetTics <= hardware.arm.getCurrentPosition())
                 {
                     armTargetState = -1;
                     hardware.intakeMotor.setPower(0);
+                    hardware.slide.setPower(0);
+                } else {
+                    hardware.intakeMotor.setPower(-0.5);
+                    //slideIn();
                 }
             }
 
-            // TODO: given current position and target position, get arm motor power from power equation
-            //       scale the power going to the motor based on the difference between current position and target
-            //       y = mx + b
-            //       when diff = -30 then power = 0.4; when diff = 0 power = 0; when diff = 30 then power = -0.4
-            //       points: (-30, 0.4), (0, 0), (30, -0.4) - what is the equation?
-
+            // Given current position and target position, get arm motor power from power equation
+            // scale the power going to the motor based on the difference between current position and target
+            // y = mx + b
+            // when diff = -30 then power = 0.4; when diff = 0 power = 0; when diff = 30 then power = -0.4
+            // points: (-30, 0.4), (0, 0), (30, -0.4)
             hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
 
             /*****************************/
@@ -151,7 +180,7 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.intakeMotor.setPower(1);
             }else if(gamepad2.square){
                 hardware.intakeMotor.setPower(-1);
-            }else{
+            } else if (armTargetState == -1){
                 hardware.intakeMotor.setPower(0);
             }
 
@@ -171,13 +200,12 @@ public class ManualDriveDookie extends LinearOpMode {
             /** AIRPLANE SECTION        **/
             /*****************************/
             if(gamepad2.right_bumper) {
-                // TODO: servo range is 0 - 1
                 hardware.airplane.setPosition(1);
             }
-            else{
+            else {
                 hardware.airplane.setPosition(0);
             }
-            // TODO: what is the servo position when the right bumper is not pushed?
+
         }
     }
 
@@ -190,6 +218,33 @@ public class ManualDriveDookie extends LinearOpMode {
         if(y > 0.4) {
             y = 0.4;
         }
+
+        if(difference > 0 && hardware.arm.getCurrentPosition() < 180 && y > 0.1) {
+            y = 0.1;
+        }
+
         return y;
+    }
+
+    public double returnPower(double distance)
+    {
+        double power = distance * -0.08 + 0.16;
+        if(power < -0.4)
+        {
+            power = -0.4;
+        }
+        else if(power > 0)
+        {
+            power = 0;
+        }
+        return power;
+    }
+
+    private void slideIn() {
+        if(!hardware.armStop.isPressed()) {
+            hardware.slide.setPower(0.5);
+        } else {
+            hardware.slide.setPower(0.5);
+        }
     }
 }

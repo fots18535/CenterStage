@@ -25,9 +25,8 @@ public class Hardware {
 
     public Servo airplane;
 
-    //DistanceSensor lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
-    //DistanceSensor lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");
-
+    public DistanceSensor lazerLeft;
+    public DistanceSensor lazerRight;
 
     public Hardware(LinearOpMode op) {
         mode = op;
@@ -79,8 +78,10 @@ public class Hardware {
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
+        lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");
+
         gyro.startGyro();
-
-
     }
+
 }
