@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.checkerframework.checker.units.qual.degrees;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -28,7 +29,7 @@ public class AprilTagYay
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double SPEED_GAIN  =  0.04  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
@@ -94,6 +95,10 @@ public class AprilTagYay
                 }
             }
 
+            double rangeError = 0;
+            double headingError = 0;
+            double yawError = 0;
+
             // Tell the driver what we see, and what to do.
             if (targetFound) {
 //                mode.telemetry.addData("\n>", "HOLD Left-Bumper to Drive to Target\n");
@@ -103,9 +108,9 @@ public class AprilTagYay
                 mode.telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double headingError = desiredTag.ftcPose.bearing;
-                double yawError = desiredTag.ftcPose.yaw;
+                rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                headingError = desiredTag.ftcPose.bearing;
+                yawError = desiredTag.ftcPose.yaw;
 
                 if(Math.abs(rangeError) < 1.0 && Math.abs(headingError) < 5 && Math.abs(yawError) < 1.0) {
                     navigationSuccess = true;
@@ -130,6 +135,18 @@ public class AprilTagYay
                 hardware.leftBack.setPower(0);
                 hardware.rightBack.setPower(0);
                 mode.sleep(10);
+            }
+
+            // when do we want to exit the loop?
+            // it's when we are close enough
+            // rangeError in inches +- 2 inch
+            // headingError in degrees +- 5
+            // yawError in degrees +- 5
+
+            if(targetFound && (rangeError > -2 && rangeError < 2) && (headingError > -5 && headingError < 5) && (yawError > -5 && yawError < 5))
+            {
+                navigationSuccess = true;
+                break;
             }
         }
 

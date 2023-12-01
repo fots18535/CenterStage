@@ -28,10 +28,6 @@ public class ManualDriveDookie extends LinearOpMode {
 
         waitForStart();
 
-        // Reset the encoder to 0
-        hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         int armTargetTics = 0;
 
         // STATES:
@@ -219,8 +215,14 @@ public class ManualDriveDookie extends LinearOpMode {
             y = 0.4;
         }
 
+        // if the arm is going down limit the power to 0.1
         if(difference > 0 && hardware.arm.getCurrentPosition() < 180 && y > 0.1) {
             y = 0.1;
+        }
+
+        if(difference < 0 && hardware.arm.getCurrentPosition() > 190 && y < -0.1)
+        {
+            y = -0.1;/**/
         }
 
         return y;
@@ -228,7 +230,7 @@ public class ManualDriveDookie extends LinearOpMode {
 
     public double returnPower(double distance)
     {
-        double power = distance * -0.08 + 0.16;
+        double power = distance * -0.062 + 0.031;
         if(power < -0.4)
         {
             power = -0.4;

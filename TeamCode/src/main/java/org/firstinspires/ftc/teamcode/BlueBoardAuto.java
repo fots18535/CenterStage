@@ -12,16 +12,20 @@ public class BlueBoardAuto extends LinearOpMode{
 
         @Override
         public void runOpMode() throws InterruptedException {
-        //figure out where the icon is located on the field.
                 Hardware hardware = new Hardware(this);
                 hardware.initialize();
+
+                // blue HSV limits
                 double[] minHsv = {1,2,3};
                 double[] maxHsv = {1,2,3};
+
+                // default target
                 int targetTag = 2;
 
+                //figure out where the icon is located on the field.
                 Detector locationId = new Detector(this);
-                locationId.setHsvLimits(minHsv, maxHsv);
                 locationId.start();
+                locationId.setHsvLimits(minHsv, maxHsv);
                 sleep(2000);
                 IconPosition icon = locationId.getPosition();
                 switch (icon) {
@@ -41,12 +45,10 @@ public class BlueBoardAuto extends LinearOpMode{
                                 telemetry.addData("Position", "unknown");
                 }
                 telemetry.update();
-                sleep(2000);
                 locationId.stop();
 
                 HunkOfMetal hunk = new HunkOfMetal(this, hardware);
                 AprilTagYay april = new AprilTagYay(this, hardware);
-                april.initializes();
 
                 waitForStart();
                 hunk.forward(-0.5, 23);
@@ -73,12 +75,13 @@ public class BlueBoardAuto extends LinearOpMode{
 //                }
 
         // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
-                april.align(targetTag);
-                //hunk.raiseArm();
-                //sleep(2000);
-                //hunk.lowerArm();
+                //april.initializes();
+                //april.align(targetTag);
+                hunk.lazerAlign();
+                hunk.raiseArm();
+                sleep(2000);
         //park in the backstage
-//                hunk.chaChaRealSmooth(0.5,23);
+                hunk.chaChaRealSmooth(0.5,23);
         }
 
 

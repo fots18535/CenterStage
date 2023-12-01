@@ -81,6 +81,10 @@ public class Hardware {
         lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
         lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");
 
+        // Reset the encoder to 0
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         gyro.startGyro();
     }
 

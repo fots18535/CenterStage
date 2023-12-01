@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class HunkOfMetal {
     LinearOpMode mode;
 
@@ -201,17 +203,100 @@ public class HunkOfMetal {
         hardware.leftBack.setPower(0.0);
     }
 
-    public void raiseArm(){
-        hardware.arm.setPower(.5);
-        while(!hardware.armStop.isPressed()){}
-        hardware.arm.setPower(0);
+   public void raiseArm()
+   {
+       int armTargetTics = 250;
+       while(mode.opModeIsActive())
+       {
+           if(armTargetTics-15 <= hardware.arm.getCurrentPosition())
+           {
+               break;
+           }
+           hardware.intakeMotor.setPower(-0.5);
+           hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+       }
+       hardware.intakeMotor.setPower(0);
+       hardware.slide.setPower(0);
+   }
+
+   public void lowerArm()
+   {
+       int armTargetTics = 0;
+       while(mode.opModeIsActive())
+       {
+           if(armTargetTics >= hardware.arm.getCurrentPosition())
+           {
+               break;
+           }
+           hardware.intakeMotor.setPower(0.5);
+           hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+       }
+       hardware.intakeMotor.setPower(0);
+       hardware.slide.setPower(0);
+   }
+
+    private double getArmPower(int targetPositon, int currentPosition){
+        int difference = currentPosition - targetPositon;
+        double y = -.013333333 * difference;
+        if(y < -0.4){
+            y = -0.4;
+        }
+        if(y > 0.4) {
+            y = 0.4;
+        }
+
+        // if the arm is going down limit the power to 0.1
+        if(difference > 0 && hardware.arm.getCurrentPosition() < 180 && y > 0.1) {
+            y = 0.1;
+        }
+
+        if(difference < 0 && hardware.arm.getCurrentPosition() > 190 && y < -0.1)
+        {
+            y = -0.1;/**/
+        }
+
+        return y;
     }
 
-    public void lowerArm(){
-        int start = hardware.arm.getCurrentPosition();
-        hardware.arm.setPower(-0.5);
-        while(Math.abs(start - hardware.arm.getCurrentPosition()) < 50){}
-        hardware.arm.setPower(0);
+    public void lazerAlign()
+    {
+        while(mode.opModeIsActive()){
+            double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
+            double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
+
+            if(Math.min(leftDist,rightDist) < 1)
+            {
+                break;
+            }
+
+            // (7, -0.4), (0.5, 0)
+            double rightY = -1.0 * returnPower(Math.min(leftDist, rightDist));
+            double rightX = (leftDist - rightDist) * 0.15 ;
+            if(rightX > 0.5) {
+                rightX = 0.5;
+            } else if(rightX < -0.5) {
+                rightX = -0.5;
+            }
+            double leftX = 0.0;
+
+            hardware.leftBack.setPower(rightX + rightY + leftX);
+            hardware.leftFront.setPower(rightX + rightY - leftX);
+            hardware.rightBack.setPower(rightX - rightY + leftX);
+            hardware.rightFront.setPower(rightX - rightY - leftX);
+        }
+    }
+    public double returnPower(double distance)
+    {
+        double power = distance * -0.062 + 0.031;
+        if(power < -0.4)
+        {
+            power = -0.4;
+        }
+        else if(power > 0)
+        {
+            power = 0;
+        }
+        return power;
     }
 }
 
