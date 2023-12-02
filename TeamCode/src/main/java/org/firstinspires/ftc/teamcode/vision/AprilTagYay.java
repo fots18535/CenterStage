@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.checkerframework.checker.units.qual.degrees;
@@ -69,6 +70,9 @@ public class AprilTagYay
         double drive = 0;               // Desired forward power/speed (-1 to +1)
         double strafe = 0;              // Desired strafe power/speed (-1 to +1)
         double turn = 0;                // Desired turning power/speed (-1 to +1)
+
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
 
         while (mode.opModeIsActive()) {
             desiredTag = null;
@@ -143,7 +147,7 @@ public class AprilTagYay
             // headingError in degrees +- 5
             // yawError in degrees +- 5
 
-            if(targetFound && (rangeError > -2 && rangeError < 2) && (headingError > -5 && headingError < 5) && (yawError > -5 && yawError < 5))
+            if(timer.seconds() > 5 || (targetFound && (rangeError > -2 && rangeError < 2) && (headingError > -5 && headingError < 5) && (yawError > -5 && yawError < 5)))
             {
                 navigationSuccess = true;
                 break;

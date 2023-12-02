@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.vision.Detector;
 import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
 @Autonomous
-public class BlueBoardAuto extends LinearOpMode {
+public class RedBackAuto extends LinearOpMode {
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -16,11 +16,11 @@ public class BlueBoardAuto extends LinearOpMode {
                 hardware.initialize();
 
                 // blue HSV limits
-                double[] minHsv = {95, 93, 162};
-                double[] maxHsv = {138, 255, 255};
+                double[] minHsv = {168,136,130};
+                double[] maxHsv = {182,214,255};
 
                 // default target
-                int targetTag = 2;
+                int targetTag = 5;
 
                 //figure out where the icon is located on the field.
                 Detector locationId = new Detector(this);
@@ -31,15 +31,15 @@ public class BlueBoardAuto extends LinearOpMode {
                 switch (icon) {
                         case LEFT:
                                 telemetry.addData("Position", "Left");
-                                targetTag = 1;
+                                targetTag = 4;
                                 break;
                         case CENTER:
                                 telemetry.addData("Position", "Center");
-                                targetTag = 2;
+                                targetTag = 5;
                                 break;
                         case RIGHT:
                                 telemetry.addData("Position", "Right");
-                                targetTag = 3;
+                                targetTag = 6;
                                 break;
                         default:
                                 telemetry.addData("Position", "unknown");
@@ -58,54 +58,20 @@ public class BlueBoardAuto extends LinearOpMode {
                 //place pixel on same line of tape as icon
                 if (icon == IconPosition.LEFT) {
                         //deliver pixel to left tape line
-                        hunk.chaChaRealSmooth(0.5, 13);
-                        hunk.forward(0.5, 4);
-                        hunk.chaChaRealSmooth(0.5, 10);
-                        hunk.forward(-0.5, 4);
-                        hunk.turnLeft(90, .5);
-                        parkDistance = 21;
-                        // hunk.forward(-0.5, 11);
+                        hunk.chaChaRealSmooth(0.5, 14);
+                        hunk.forward(0.5, 5);
                 } else if (icon == IconPosition.CENTER) {
 //                      //deliver pixel to center tape line
                         hunk.forward(-0.5, 8);
                         hunk.forward(0.5, 8);
-                        hunk.turnLeft(85, .5);
-                        hunk.forward(-0.5, 20);
-                        parkDistance = 23;
                 }
 //
                 else {
 //                      //deliver pixel to right tape line
-                        hunk.forward(-0.5, 6);
-                        hunk.chaChaRealSmooth(-0.5, 7);
-                        hunk.forward(0.5, 5);
-                        hunk.chaChaRealSmooth(0.5, 10);
-                        hunk.turnLeft(85, .5);
+                        hunk.forward(-0.5, 5);
                         hunk.chaChaRealSmooth(-0.5, 5);
-                        hunk.forward(-0.5, 12);
-                        parkDistance = 28;
-//                        hunk.chaChaRealSmooth(0.5, 11);
-//                        hunk.turnLeft(90, .5);
-//                        hunk.forward(0.5, 46);
-//
-
+                        hunk.forward(0.5, 4);
                }
-
-                        // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
-                        april.initializes();
-                        april.align(targetTag);
-                        hunk.lazerAlign();
-                        hunk.raiseArm();
-                        sleep(2000);
-
-                        hunk.lowerArm();
-                        hardware.intakeMotor.setPower(0.5);
-                        hunk.forward(.5, 2);
-
-                        //park in the backstage
-                        hunk.chaChaRealSmooth(0.5, parkDistance);
-
-
                 }
         }
 

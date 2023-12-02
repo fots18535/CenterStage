@@ -116,6 +116,9 @@ public class Detector {
         Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
         Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
 
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+        boolean drawRegions = true;
+
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile IconPosition position = IconPosition.LEFT;
 
@@ -180,6 +183,17 @@ public class Detector {
             else
             {
                 position = IconPosition.RIGHT;
+            }
+
+            if(drawRegions) {
+                Imgproc.rectangle(
+                        mask3chan, // Buffer to draw on
+                        lu, // First point which defines the rectangle
+                        ll, // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        2); // Thickness of the rectangle lines
+                Imgproc.rectangle(mask3chan, mu, ml, BLUE, 2);
+                Imgproc.rectangle(mask3chan, ru, rl, BLUE, 2);
             }
 
             return mask3chan;

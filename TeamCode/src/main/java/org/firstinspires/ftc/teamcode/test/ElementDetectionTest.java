@@ -14,6 +14,12 @@ public class ElementDetectionTest extends LinearOpMode {
         Detector detector = new Detector(this);
         detector.start();
 
+        // blue HSV limits
+        double[] minHsv = {168,136,130};
+        double[] maxHsv = {182,214,255};
+
+        detector.setHsvLimits(minHsv, maxHsv);
+
         waitForStart();
 
         while (opModeIsActive()) {

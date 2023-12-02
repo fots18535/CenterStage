@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -260,18 +261,25 @@ public class HunkOfMetal {
 
     public void lazerAlign()
     {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
         while(mode.opModeIsActive()){
             double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
             double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
 
-            if(Math.min(leftDist,rightDist) < 1)
+            if(timer.seconds() > 4 || Math.min(leftDist,rightDist) < 1)
             {
                 break;
             }
 
             // (7, -0.4), (0.5, 0)
             double rightY = -1.0 * returnPower(Math.min(leftDist, rightDist));
-            double rightX = (leftDist - rightDist) * 0.15 ;
+            double rightX = 0;
+            if(Math.max(leftDist, rightDist) - Math.min(leftDist, rightDist) < 10)
+            {
+                rightX = (leftDist - rightDist) * 0.15 ;
+            }
             if(rightX > 0.5) {
                 rightX = 0.5;
             } else if(rightX < -0.5) {
