@@ -47,6 +47,8 @@ public class HunkOfMetal {
         // Slide until encoder ticks are sufficient
         hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
         while (mode.opModeIsActive()) {
             //absolute value of getCurrentPosition()
             int tics = hardware.perp.getCurrentPosition();
@@ -61,7 +63,7 @@ public class HunkOfMetal {
             hardware.rightBack.setPower(rightX - rpower);
             hardware.rightFront.setPower(rightX + rpower);
 
-            if (tics > length * slideTicksPerInch) {
+            if (tics > length * slideTicksPerInch || timer.seconds() > 9) {
                 break;
             }
             mode.idle();
@@ -215,6 +217,7 @@ public class HunkOfMetal {
            }
            hardware.intakeMotor.setPower(-0.5);
            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+           hardware.slide.setPower(-0.2);
        }
        hardware.intakeMotor.setPower(0);
        hardware.slide.setPower(0);
@@ -231,6 +234,7 @@ public class HunkOfMetal {
            }
            hardware.intakeMotor.setPower(0.5);
            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+           hardware.slide.setPower(0.3);
        }
        hardware.intakeMotor.setPower(0);
        hardware.slide.setPower(0);
@@ -253,7 +257,7 @@ public class HunkOfMetal {
 
         if(difference < 0 && hardware.arm.getCurrentPosition() > 190 && y < -0.1)
         {
-            y = -0.1;/**/
+            y = -0.1;
         }
 
         return y;
@@ -292,6 +296,8 @@ public class HunkOfMetal {
             hardware.rightBack.setPower(rightX - rightY + leftX);
             hardware.rightFront.setPower(rightX - rightY - leftX);
         }
+
+        stopMotors();
     }
     public double returnPower(double distance)
     {

@@ -15,8 +15,8 @@ public class BlueBackAuto extends LinearOpMode {
         hardware.initialize();
 
         // blue HSV limits
-        double[] minHsv = {95, 93, 162};
-        double[] maxHsv = {138, 255, 255};
+        double[] minHsv = {108,93,88};
+        double[] maxHsv = {126,255,255};
 
         // default target
         int targetTag = 2;
@@ -26,6 +26,9 @@ public class BlueBackAuto extends LinearOpMode {
         locationId.start();
         locationId.setHsvLimits(minHsv, maxHsv);
         sleep(2000);
+
+
+        waitForStart();
         IconPosition icon = locationId.getPosition();
         switch (icon) {
             case LEFT:
@@ -48,8 +51,6 @@ public class BlueBackAuto extends LinearOpMode {
 
         HunkOfMetal hunk = new HunkOfMetal(this, hardware);
         AprilTagYay april = new AprilTagYay(this, hardware);
-
-        waitForStart();
         hunk.forward(-0.5, 23);
 
         //place pixel on same line of tape as icon

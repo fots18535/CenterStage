@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.vision.Detector;
 import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
 @TeleOp
-public class ElementDetectionTest extends LinearOpMode {
+public class ElementDetectionTestBlue extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -15,8 +15,8 @@ public class ElementDetectionTest extends LinearOpMode {
         detector.start();
 
         // blue HSV limits
-        double[] minHsv = {168,136,130};
-        double[] maxHsv = {182,214,255};
+        double[] minHsv = {108,93,88};
+        double[] maxHsv = {126,255,255};
 
         detector.setHsvLimits(minHsv, maxHsv);
 

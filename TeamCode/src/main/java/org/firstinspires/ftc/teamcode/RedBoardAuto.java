@@ -15,9 +15,9 @@ public class RedBoardAuto extends LinearOpMode {
                 Hardware hardware = new Hardware(this);
                 hardware.initialize();
 
-                // blue HSV limits
-                double[] minHsv = {168,136,130};
-                double[] maxHsv = {182,214,255};
+                // red HSV limits
+                double[] minHsv = {153,135,0};
+                double[] maxHsv = {191,228,255};
 
                 // default target
                 int targetTag = 5;
@@ -27,6 +27,9 @@ public class RedBoardAuto extends LinearOpMode {
                 locationId.start();
                 locationId.setHsvLimits(minHsv, maxHsv);
                 sleep(2000);
+
+
+                waitForStart();
                 IconPosition icon = locationId.getPosition();
                 switch (icon) {
                         case LEFT:
@@ -49,8 +52,6 @@ public class RedBoardAuto extends LinearOpMode {
 
                 HunkOfMetal hunk = new HunkOfMetal(this, hardware);
                 AprilTagYay april = new AprilTagYay(this, hardware);
-
-                waitForStart();
                 hunk.forward(-0.5, 23);
 
                 int parkDistance = 0;
@@ -58,7 +59,7 @@ public class RedBoardAuto extends LinearOpMode {
                 //place pixel on same line of tape as icon
                 if (icon == IconPosition.LEFT) {
                         //deliver pixel to left tape line
-                        hunk.forward(-0.5, 5);
+                        hunk.forward(-0.5, 3.5);
                         hunk.chaChaRealSmooth(0.5, 7);
                         hunk.forward(0.5, 5);
                         hunk.chaChaRealSmooth(-0.5, 10);

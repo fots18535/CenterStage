@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.min;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -29,6 +30,9 @@ public class ManualDriveDookie extends LinearOpMode {
         waitForStart();
 
         int armTargetTics = 0;
+
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
 
         // STATES:
         //      -1 = at target position
@@ -51,7 +55,7 @@ public class ManualDriveDookie extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 slowSpeed = 0.5;
             } else {
-                slowSpeed = 0.8;
+                slowSpeed = 0.9                                                           ;
             }
             //Get the input from the game pad controller
             double leftX = -gamepad1.left_stick_x * slowSpeed;
@@ -101,6 +105,17 @@ public class ManualDriveDookie extends LinearOpMode {
             }else if(gamepad2.dpad_right) {
                 armTargetState = 2; // going to forward most position
             }
+            if(gamepad2.left_trigger > 0.1) {
+                armTargetState = -1;
+                hardware.arm.setPower(gamepad2.left_trigger);
+                armTargetTics = hardware.arm.getCurrentPosition();
+            }
+
+            if(gamepad2.right_trigger > 0.1){
+                armTargetState =  -1;
+                hardware.arm.setPower(-gamepad2.right_trigger);
+                armTargetTics = hardware.arm.getCurrentPosition();
+            }
 
             // Code for target state 0: going to ground position
             // if armTargetState == 0 then
@@ -118,7 +133,7 @@ public class ManualDriveDookie extends LinearOpMode {
                     hardware.slide.setPower(0);
                 } else {
                     hardware.intakeMotor.setPower(0.5);
-                    //slideIn();
+                    hardware.slide.setPower(0.3);
                 }
             }
 
@@ -138,7 +153,7 @@ public class ManualDriveDookie extends LinearOpMode {
                     hardware.slide.setPower(0);
                 } else {
                     hardware.intakeMotor.setPower(-0.5);
-                    //slideIn();
+                    hardware.slide.setPower(-0.2);
                 }
             }
 
@@ -166,7 +181,7 @@ public class ManualDriveDookie extends LinearOpMode {
             // scale the power going to the motor based on the difference between current position and target
             // y = mx + b
             // when diff = -30 then power = 0.4; when diff = 0 power = 0; when diff = 30 then power = -0.4
-            // points: (-30, 0.4), (0, 0), (30, -0.4)
+            // points: (-20, 0.4), (0, 0), (20, -0.4)
             hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
 
             /*****************************/
@@ -195,7 +210,7 @@ public class ManualDriveDookie extends LinearOpMode {
             /*****************************/
             /** AIRPLANE SECTION        **/
             /*****************************/
-            if(gamepad2.right_bumper) {
+            if(gamepad2.right_bumper && timer.seconds() > 90) {
                 hardware.airplane.setPosition(1);
             }
             else {
@@ -207,12 +222,13 @@ public class ManualDriveDookie extends LinearOpMode {
 
     private double getArmPower(int targetPositon, int currentPosition){
         int difference = currentPosition - targetPositon;
-        double y = -.013333333 * difference;
-        if(y < -0.4){
-            y = -0.4;
+        //double y = -.013333333 * difference;
+        double y = -.02 * difference;
+        if(y < -0.45){
+            y = -0.45;
         }
-        if(y > 0.4) {
-            y = 0.4;
+        if(y > 0.45) {
+            y = 0.45;
         }
 
         // if the arm is going down limit the power to 0.1
