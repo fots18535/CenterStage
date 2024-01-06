@@ -16,6 +16,8 @@ public class Hardware {
     public DcMotor rightFront;
     public DcMotorEx par0, par1, perp;
 
+    public DcMotor hang;
+
     public DcMotor arm;
     public TouchSensor armStop;
     public DcMotor intakeMotor;
@@ -24,6 +26,8 @@ public class Hardware {
     LinearOpMode mode;
 
     public Servo airplane;
+    public Servo leftHang;
+    public Servo rightHang;
 
     public DistanceSensor lazerLeft;
     public DistanceSensor lazerRight;
@@ -48,6 +52,9 @@ public class Hardware {
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        hang = mode.hardwareMap.get(DcMotor.class, "hang");
+
 
 //        par0 = mode.hardwareMap.get(DcMotorEx.class, "leftBack");
 //        par1 = mode.hardwareMap.get(DcMotorEx.class, "rightBack");
@@ -74,6 +81,9 @@ public class Hardware {
         intakeMotor = mode.hardwareMap.get(DcMotor.class, "intakeMotor");
         slide = mode.hardwareMap.get(DcMotor.class, "slide");
         airplane = mode.hardwareMap.get(Servo.class,"airplane");
+
+        leftHang = mode.hardwareMap.get(Servo.class,"leftHang");
+        rightHang = mode.hardwareMap.get(Servo.class,"rightHang");
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

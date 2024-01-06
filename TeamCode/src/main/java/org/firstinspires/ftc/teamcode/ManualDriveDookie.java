@@ -39,6 +39,7 @@ public class ManualDriveDookie extends LinearOpMode {
         //      0 = going to ground position
         //      1 = going to vertical position
         //      2 = going to forward most position
+        //      3 = lowering lift
         int armTargetState = -1;
         while (opModeIsActive()) {
 
@@ -101,7 +102,7 @@ public class ManualDriveDookie extends LinearOpMode {
             if(gamepad2.dpad_up){
                 armTargetState = 1; // going to vertical position
             }else if(gamepad2.dpad_down) {
-                armTargetState = 0; // going to ground position
+                armTargetState = 3; // make sure the lift is down
             }else if(gamepad2.dpad_right) {
                 armTargetState = 2; // going to forward most position
             }
@@ -177,6 +178,20 @@ public class ManualDriveDookie extends LinearOpMode {
                 }
             }
 
+            // Code for target state 3: lower the lift then switch to state 0
+            if(armTargetState == 3)
+            {
+                if(hardware.armStop.isPressed())
+                {
+                    hardware.slide.setPower(0);
+                    armTargetTics = 0;
+                }
+                else
+                {
+                    hardware.slide.setPower(-0.5);
+                }
+            }
+
             // Given current position and target position, get arm motor power from power equation
             // scale the power going to the motor based on the difference between current position and target
             // y = mx + b
@@ -217,8 +232,30 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.airplane.setPosition(0);
             }
 
-        }
+            if(gamepad1.dpad_up){
+                hardware.hang.setPower(0.5);
+            }
+
+            if(gamepad1.dpad_down){
+                hardware.hang.setPower(-0.5);
+            }
+
+            if(!gamepad1.dpad_up && !gamepad1.dpad_down){
+                hardware.hang.setPower(0.0);
+
+            }
+
+            if(gamepad1.triangle) {
+                hardware.leftHang.setPosition(0);
+                hardware.rightHang.setPosition(1);
+            }else{
+                hardware.leftHang.setPosition(1);
+                hardware.rightHang.setPosition(0);
+            }
+}
     }
+
+
 
     private double getArmPower(int targetPositon, int currentPosition){
         int difference = currentPosition - targetPositon;
