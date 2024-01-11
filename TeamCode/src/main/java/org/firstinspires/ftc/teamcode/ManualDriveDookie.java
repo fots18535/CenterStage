@@ -134,7 +134,9 @@ public class ManualDriveDookie extends LinearOpMode {
                     hardware.slide.setPower(0);
                 } else {
                     hardware.intakeMotor.setPower(0.5);
-                    hardware.slide.setPower(0.3);
+                    if(!hardware.armStop.isPressed()) {
+                        hardware.slide.setPower(0.3);
+                    }
                 }
             }
 
@@ -154,7 +156,9 @@ public class ManualDriveDookie extends LinearOpMode {
                     hardware.slide.setPower(0);
                 } else {
                     hardware.intakeMotor.setPower(-0.5);
-                    hardware.slide.setPower(-0.2);
+                    if(hardware.armStop.isPressed()) {
+                        hardware.slide.setPower(-0.2);
+                    }
                 }
             }
 
@@ -184,11 +188,11 @@ public class ManualDriveDookie extends LinearOpMode {
                 if(hardware.armStop.isPressed())
                 {
                     hardware.slide.setPower(0);
-                    armTargetTics = 0;
+                    armTargetState = 0;
                 }
                 else
                 {
-                    hardware.slide.setPower(-0.5);
+                    hardware.slide.setPower(0.7);
                 }
             }
 
@@ -214,11 +218,13 @@ public class ManualDriveDookie extends LinearOpMode {
             /** LINEAR SLIDE SECTION    **/
             /*****************************/
             // TODO: need to set encoder limits and/or button to not over / under extend the slide
-            if(gamepad2.cross){
+            if(gamepad2.cross && !hardware.armStop.isPressed()){
+                // down
                 hardware.slide.setPower(0.7);
             }else if(gamepad2.triangle){
+                // up
                 hardware.slide.setPower(-0.7);
-            }else{
+            }else if (armTargetState == -1){
                 hardware.slide.setPower(0);
             }
 
