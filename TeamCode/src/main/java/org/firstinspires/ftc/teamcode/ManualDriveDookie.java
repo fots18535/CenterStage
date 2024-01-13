@@ -24,6 +24,8 @@ public class ManualDriveDookie extends LinearOpMode {
         hardware = new Hardware(this);
         hardware.initialize();
 
+        HunkOfMetal hunk = new HunkOfMetal(this, hardware);
+
         double power = 0;
         double correction = 0;
 
@@ -41,6 +43,14 @@ public class ManualDriveDookie extends LinearOpMode {
         //      2 = going to forward most position
         //      3 = lowering lift
         int armTargetState = -1;
+        int prevArmTargetState = -1;
+
+        // -1 at target
+        // 0 = first
+        // 1 = second row
+        int slidePos = -1;
+
+        boolean slideButtonReleased = true;
         while (opModeIsActive()) {
 
 //            telemetry.addData("par0", hardware.par0.getCurrentPosition());
@@ -56,7 +66,7 @@ public class ManualDriveDookie extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 slowSpeed = 0.5;
             } else {
-                slowSpeed = 0.9                                                           ;
+                slowSpeed = 1.0                                                           ;
             }
             //Get the input from the game pad controller
             double leftX = -gamepad1.left_stick_x * slowSpeed;
@@ -101,18 +111,21 @@ public class ManualDriveDookie extends LinearOpMode {
 
             if(gamepad2.dpad_up){
                 armTargetState = 1; // going to vertical position
+                prevArmTargetState = 1;
             }else if(gamepad2.dpad_down) {
                 armTargetState = 3; // make sure the lift is down
+                prevArmTargetState = 3;
             }else if(gamepad2.dpad_right) {
                 armTargetState = 2; // going to forward most position
+                prevArmTargetState = 2;
             }
-            if(gamepad2.left_trigger > 0.1) {
+            if(gamepad2.left_trigger > 0.1) { // up
                 armTargetState = -1;
                 hardware.arm.setPower(gamepad2.left_trigger);
                 armTargetTics = hardware.arm.getCurrentPosition();
             }
 
-            if(gamepad2.right_trigger > 0.1){
+            if(gamepad2.right_trigger > 0.1){ // down
                 armTargetState =  -1;
                 hardware.arm.setPower(-gamepad2.right_trigger);
                 armTargetTics = hardware.arm.getCurrentPosition();
@@ -149,7 +162,7 @@ public class ManualDriveDookie extends LinearOpMode {
             if(armTargetState == 1)
             {
                 armTargetTics = 195;
-                if(armTargetTics <= hardware.arm.getCurrentPosition())
+                if(armTargetTics - 10 <= hardware.arm.getCurrentPosition())
                 {
                     armTargetState = -1;
                     hardware.intakeMotor.setPower(0);
@@ -189,6 +202,7 @@ public class ManualDriveDookie extends LinearOpMode {
                 {
                     hardware.slide.setPower(0);
                     armTargetState = 0;
+                    prevArmTargetState =0;
                 }
                 else
                 {
@@ -217,16 +231,87 @@ public class ManualDriveDookie extends LinearOpMode {
             /*****************************/
             /** LINEAR SLIDE SECTION    **/
             /*****************************/
-            // TODO: need to set encoder limits and/or button to not over / under extend the slide
-            if(gamepad2.cross && !hardware.armStop.isPressed()){
-                // down
-                hardware.slide.setPower(0.7);
-            }else if(gamepad2.triangle){
-                // up
-                hardware.slide.setPower(-0.7);
-            }else if (armTargetState == -1){
-                hardware.slide.setPower(0);
+
+            if(prevArmTargetState == 1 || prevArmTargetState == 2) {
+                if (gamepad2.cross) {
+                    if (slideButtonReleased && slidePos > 0) {
+                        slidePos--;
+                    }
+                    slideButtonReleased = false;
+                } else if (gamepad2.triangle) {
+                    if (slideButtonReleased && slidePos < 3) {
+                        slidePos++;
+                        hunk.forward(0.3, 0.5);
+                    }
+                    slideButtonReleased = false;
+                } else {
+                    slideButtonReleased = true;
+                }
+
+                if (slidePos == 0) {
+                    telemetry.addData("slidetarget", 0);
+                    if (!hardware.armStop.isPressed()) {
+                        hardware.slide.setPower(0.7);
+                    } else {
+                        hardware.slide.setPower(0.0);
+                        hardware.slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        hardware.slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        //slidePos = -1;
+                    }
+                }
+
+                if (slidePos == 1) {
+                    telemetry.addData("slidetarget", -1500);
+                    if (hardware.slide.getCurrentPosition() > -1500) { //-840
+                        hardware.slide.setPower(-0.7); // up
+                    } else if (hardware.slide.getCurrentPosition() < -1550) {
+                        hardware.slide.setPower(0.7); // down
+                    } else {
+                        hardware.slide.setPower(0);
+                        //slidePos = -1;
+                    }
+                }
+
+                if (slidePos == 2) {
+                    telemetry.addData("slidetarget", -2670);
+                    if (hardware.slide.getCurrentPosition() > -2670) {
+                        hardware.slide.setPower(-0.7); // up
+                    } else if (hardware.slide.getCurrentPosition() < -2720) {
+                        hardware.slide.setPower(0.7); // down
+                    } else {
+                        hardware.slide.setPower(0);
+                        //slidePos = -1;
+                    }
+                }
+
+                if (slidePos == 3) {
+                    telemetry.addData("slidetarget", -3840);
+                    if (hardware.slide.getCurrentPosition() > -3840) {
+                        hardware.slide.setPower(-0.7); // up
+                    } else if (hardware.slide.getCurrentPosition() < -3890) {
+                        hardware.slide.setPower(0.7); // down
+                    } else {
+                        hardware.slide.setPower(0);
+                        //slidePos = -1;
+                    }
+                }
+
+            } else {
+                slidePos = 0;
+                if(gamepad2.cross && !hardware.armStop.isPressed()){
+                    // down
+                    hardware.slide.setPower(0.7);
+                }else if(gamepad2.triangle){
+                    // up
+                    hardware.slide.setPower(-0.7);
+                }else if (armTargetState == -1){
+                    hardware.slide.setPower(0);
+                }
             }
+
+            telemetry.addData("slidePos", slidePos);
+            telemetry.addData("slide", hardware.slide.getCurrentPosition());
+
 
             /*****************************/
             /** AIRPLANE SECTION        **/
@@ -258,7 +343,8 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.leftHang.setPosition(1);
                 hardware.rightHang.setPosition(0);
             }
-}
+            telemetry.update();
+        }
     }
 
 

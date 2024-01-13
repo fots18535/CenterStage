@@ -87,6 +87,8 @@ public class Hardware {
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
         lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");

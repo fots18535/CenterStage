@@ -226,15 +226,22 @@ public class HunkOfMetal {
    public void lowerArm()
    {
        int armTargetTics = 0;
+       int tolerance = 10;
        while(mode.opModeIsActive())
        {
-           if(armTargetTics >= hardware.arm.getCurrentPosition())
+           if(armTargetTics + tolerance >= hardware.arm.getCurrentPosition())
            {
                break;
            }
            hardware.intakeMotor.setPower(0.5);
            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
-           hardware.slide.setPower(0.3);
+           if(hardware.armStop.isPressed())
+           {
+               hardware.slide.setPower(0);
+           }
+           else {
+               hardware.slide.setPower(0.3);
+           }
        }
        hardware.intakeMotor.setPower(0);
        hardware.slide.setPower(0);
