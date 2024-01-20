@@ -51,6 +51,7 @@ public class ManualDriveDookie extends LinearOpMode {
         int slidePos = -1;
 
         boolean slideButtonReleased = true;
+        boolean launchTimerReset = false;
         while (opModeIsActive()) {
 
 //            telemetry.addData("par0", hardware.par0.getCurrentPosition());
@@ -241,7 +242,7 @@ public class ManualDriveDookie extends LinearOpMode {
                 } else if (gamepad2.triangle) {
                     if (slideButtonReleased && slidePos < 3) {
                         slidePos++;
-                        hunk.forward(0.3, 0.5);
+                        hunk.forward(0.3, 0.75);
                     }
                     slideButtonReleased = false;
                 } else {
@@ -316,10 +317,18 @@ public class ManualDriveDookie extends LinearOpMode {
             /*****************************/
             /** AIRPLANE SECTION        **/
             /*****************************/
-            if(gamepad2.right_bumper && timer.seconds() > 90) {
-                hardware.airplane.setPosition(1);
+            if(gamepad2.right_bumper) {
+                if(!launchTimerReset){
+                    timer.reset();
+                    launchTimerReset = true;
+                }
+                if(timer.seconds() > 2){
+                    hardware.airplane.setPosition(1);
+                }
+
             }
             else {
+                launchTimerReset = false;
                 hardware.airplane.setPosition(0);
             }
 

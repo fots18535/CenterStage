@@ -59,14 +59,26 @@ public class BlueBackAuto extends LinearOpMode {
             hunk.chaChaRealSmooth(0.5, 13);
             hunk.forward(-0.5, 4);
             hunk.forward(0.5, 4);
+            hunk.chaChaRealSmooth(-0.5,13);
+            hunk.forward(-0.5,24);
+            hunk.turnLeft(90,0.5);
+            hunk.forward(-0.5,84);
         } else if (icon == IconPosition.CENTER) {
             hunk.forward(-0.5, 8);
             hunk.forward(0.5, 8);
+            hunk.chaChaRealSmooth(-0.5,19);
+            hunk.forward(-0.5,27);
+            hunk.turnLeft(85,0.5);
+            hunk.forward(-0.5,105);
         } else {
 //                      //deliver pixel to right tape line
             hunk.forward(-0.5, 6);
-            hunk.chaChaRealSmooth(-0.5, 5);
+            hunk.chaChaRealSmooth(-0.5, 7);
             hunk.forward(0.5, 5);
+            hunk.chaChaRealSmooth(0.5,31);
+            hunk.forward(-0.5,24);
+            hunk.turnLeft(85,0.5);
+            hunk.forward(-0.5, 55);
         }
     }
 }

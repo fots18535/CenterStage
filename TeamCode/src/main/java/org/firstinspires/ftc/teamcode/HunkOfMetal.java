@@ -287,7 +287,7 @@ public class HunkOfMetal {
             // (7, -0.4), (0.5, 0)
             double rightY = -1.0 * returnPower(Math.min(leftDist, rightDist));
             double rightX = 0;
-            if(Math.max(leftDist, rightDist) - Math.min(leftDist, rightDist) < 10)
+            if(Math.max(leftDist, rightDist) - Math.min(leftDist, rightDist) < 6)
             {
                 rightX = (leftDist - rightDist) * 0.15 ;
             }
