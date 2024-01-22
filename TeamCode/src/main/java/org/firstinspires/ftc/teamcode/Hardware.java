@@ -32,6 +32,9 @@ public class Hardware {
     public DistanceSensor lazerLeft;
     public DistanceSensor lazerRight;
 
+    public DistanceSensor lazerCenterLeft;
+    public DistanceSensor lazerCenterRight;
+
     public Hardware(LinearOpMode op) {
         mode = op;
     }
@@ -92,6 +95,8 @@ public class Hardware {
 
         lazerLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerLeft");
         lazerRight = mode.hardwareMap.get(DistanceSensor.class, "lazerRight");
+        lazerCenterLeft = mode.hardwareMap.get(DistanceSensor.class, "lazerCenterLeft");
+        lazerCenterRight = mode.hardwareMap.get(DistanceSensor.class, "lazerCenterRight");
 
         // Reset the encoder to 0
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

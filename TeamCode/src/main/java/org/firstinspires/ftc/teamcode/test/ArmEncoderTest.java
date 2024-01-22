@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware;
-@TeleOp
+@TeleOp(group="Tests")
 public class ArmEncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

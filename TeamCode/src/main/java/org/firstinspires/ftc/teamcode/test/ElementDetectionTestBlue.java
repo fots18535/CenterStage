@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.vision.Detector;
 import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
-@TeleOp
+@TeleOp(group="Tests")
 public class ElementDetectionTestBlue extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

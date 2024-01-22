@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.HunkOfMetal;
 import org.firstinspires.ftc.teamcode.RedStopper;
 
-@Autonomous
+@Autonomous(group="Tests")
 public class DriveToRedTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

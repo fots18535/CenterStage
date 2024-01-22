@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.HunkOfMetal;
 
-@Autonomous
+@Autonomous(group="Tests")
 public class ForwardTest extends LinearOpMode {
 
     @Override

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.HunkOfMetal;
 import org.firstinspires.ftc.teamcode.vision.AprilTagYay;
 
-@Autonomous
+@Autonomous(group="Tests")
 public class AlignTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

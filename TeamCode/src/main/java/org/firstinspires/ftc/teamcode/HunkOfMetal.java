@@ -47,6 +47,8 @@ public class HunkOfMetal {
         // Slide until encoder ticks are sufficient
         hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
+        long measuredTime = System.currentTimeMillis();
+        int measuredTics = 0;
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
         while (mode.opModeIsActive()) {
@@ -66,6 +68,20 @@ public class HunkOfMetal {
             if (tics > length * slideTicksPerInch || timer.seconds() > 9) {
                 break;
             }
+
+            // If we are trying to move but are not then throw an exception
+            if(System.currentTimeMillis() - measuredTime > 1000)
+            {
+                if(measuredTics < 1000)
+                {
+                    stopMotors();
+                    throw new RuntimeException("We are stuck");
+                }
+                measuredTics = 0;
+                measuredTime = System.currentTimeMillis();
+            } else {
+                measuredTics+= tics;
+            }
             mode.idle();
         }
 
@@ -84,6 +100,8 @@ public class HunkOfMetal {
 
         hardware.gyro.reset();
         long startTime = System.currentTimeMillis();
+        long measuredTime = System.currentTimeMillis();
+        int measuredTics = 0;
 
         // Go forward until tics reached
         while (mode.opModeIsActive()) {
@@ -98,6 +116,20 @@ public class HunkOfMetal {
 
             if (tics > length * ticksPerInch) {
                 break;
+            }
+
+            // If we are trying to move but are not then throw an exception
+            if(System.currentTimeMillis() - measuredTime > 1000)
+            {
+                if(measuredTics < 1000)
+                {
+                    stopMotors();
+                    throw new RuntimeException("We are stuck");
+                }
+                measuredTics = 0;
+                measuredTime = System.currentTimeMillis();
+            } else {
+                measuredTics+= tics;
             }
 
             // Get the angle and adjust the power to correct

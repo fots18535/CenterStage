@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp
+@TeleOp(group="Tests")
 public class DriveToTarget extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.

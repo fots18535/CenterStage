@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
 
-@TeleOp
+@TeleOp(group="Tests")
 public class DistanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,6 +17,8 @@ public class DistanceSensorTest extends LinearOpMode {
         while (opModeIsActive()) {
             double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
             double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
+            double centerLeftDist = hardware.lazerCenterLeft.getDistance(DistanceUnit.INCH);
+            double centerRightDist = hardware.lazerCenterRight.getDistance(DistanceUnit.INCH);
 
             // (7, -0.4), (2, 0)
             double leftPower = returnPower(leftDist);
@@ -24,6 +26,8 @@ public class DistanceSensorTest extends LinearOpMode {
 
             telemetry.addData("lazerLeft",leftDist);
             telemetry.addData("lazerRight",rightDist);
+            telemetry.addData("lazerCenterLeft",centerLeftDist);
+            telemetry.addData("lazerCenterRight",centerRightDist);
             telemetry.addData("leftPower",leftPower);
             telemetry.addData("rightPower",rightPower);
             telemetry.update();

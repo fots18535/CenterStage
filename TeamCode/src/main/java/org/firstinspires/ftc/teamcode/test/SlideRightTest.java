@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.HunkOfMetal;
 
-@Autonomous
+@Autonomous(group="Tests")
 public class SlideRightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

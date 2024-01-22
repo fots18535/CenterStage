@@ -9,17 +9,17 @@ import org.firstinspires.ftc.teamcode.vision.IconPosition;
 
 @Autonomous
 public class BlueBackAuto extends LinearOpMode {
+    HunkOfMetal hunk;
+    Hardware hardware;
+     int targetTag = 2;
     @Override
     public void runOpMode() throws InterruptedException {
-        Hardware hardware = new Hardware(this);
+        hardware = new Hardware(this);
         hardware.initialize();
 
         // blue HSV limits
         double[] minHsv = {108,93,88};
         double[] maxHsv = {126,255,255};
-
-        // default target
-        int targetTag = 2;
 
         //figure out where the icon is located on the field.
         Detector locationId = new Detector(this);
@@ -49,7 +49,7 @@ public class BlueBackAuto extends LinearOpMode {
         telemetry.update();
         locationId.stop();
 
-        HunkOfMetal hunk = new HunkOfMetal(this, hardware);
+        hunk = new HunkOfMetal(this, hardware);
         AprilTagYay april = new AprilTagYay(this, hardware);
         hunk.forward(-0.5, 23);
 
@@ -62,14 +62,14 @@ public class BlueBackAuto extends LinearOpMode {
             hunk.chaChaRealSmooth(-0.5,13);
             hunk.forward(-0.5,24);
             hunk.turnLeft(90,0.5);
-            hunk.forward(-0.5,84);
+            hunk.forward(-0.5,64);
         } else if (icon == IconPosition.CENTER) {
             hunk.forward(-0.5, 8);
             hunk.forward(0.5, 8);
             hunk.chaChaRealSmooth(-0.5,19);
             hunk.forward(-0.5,27);
             hunk.turnLeft(85,0.5);
-            hunk.forward(-0.5,105);
+            hunk.forward(-0.5,85);
         } else {
 //                      //deliver pixel to right tape line
             hunk.forward(-0.5, 6);
@@ -78,7 +78,18 @@ public class BlueBackAuto extends LinearOpMode {
             hunk.chaChaRealSmooth(0.5,31);
             hunk.forward(-0.5,24);
             hunk.turnLeft(85,0.5);
-            hunk.forward(-0.5, 55);
+            hunk.forward(-0.5, 35);
         }
+        doLastSteps();
+    }
+
+    public void doLastSteps()
+    {
+        hunk.forward(-0.5,20);
+        hunk.raiseArm();
+        sleep(1000);
+        hunk.lowerArm();
+        hardware.intakeMotor.setPower(0.5);
+        sleep(1000);
     }
 }
