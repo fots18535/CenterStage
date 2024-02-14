@@ -79,6 +79,8 @@ public class ManualDriveDookie extends LinearOpMode {
                 // BOARD ALIGN
                 double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
                 double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
+                double centerLeftDist = hardware.lazerCenterLeft.getDistance(DistanceUnit.INCH);
+                double centerRightDist = hardware.lazerCenterRight.getDistance(DistanceUnit.INCH);
 
                 // (7, -0.4), (2, 0)
                 rightY = -1.0 * returnPower(Math.min(leftDist, rightDist));
@@ -207,7 +209,12 @@ public class ManualDriveDookie extends LinearOpMode {
                 }
                 else
                 {
-                    hardware.slide.setPower(0.7);
+                    armTargetTics = 195;
+                    if(armTargetTics - 10 <= hardware.arm.getCurrentPosition())
+                    {
+                        hardware.intakeMotor.setPower(0);
+                        hardware.slide.setPower(0.7);
+                    }
                 }
             }
 
@@ -242,7 +249,7 @@ public class ManualDriveDookie extends LinearOpMode {
                 } else if (gamepad2.triangle) {
                     if (slideButtonReleased && slidePos < 3) {
                         slidePos++;
-                        hunk.forward(0.3, 0.75);
+                        //hunk.forward(0.3, 0.75);
                     }
                     slideButtonReleased = false;
                 } else {
@@ -262,10 +269,10 @@ public class ManualDriveDookie extends LinearOpMode {
                 }
 
                 if (slidePos == 1) {
-                    telemetry.addData("slidetarget", -1500);
-                    if (hardware.slide.getCurrentPosition() > -1500) { //-840
+                    telemetry.addData("slidetarget", -1800);
+                    if (hardware.slide.getCurrentPosition() > -1800) { //-840
                         hardware.slide.setPower(-0.7); // up
-                    } else if (hardware.slide.getCurrentPosition() < -1550) {
+                    } else if (hardware.slide.getCurrentPosition() < -1850) {
                         hardware.slide.setPower(0.7); // down
                     } else {
                         hardware.slide.setPower(0);
@@ -274,10 +281,10 @@ public class ManualDriveDookie extends LinearOpMode {
                 }
 
                 if (slidePos == 2) {
-                    telemetry.addData("slidetarget", -2670);
-                    if (hardware.slide.getCurrentPosition() > -2670) {
+                    telemetry.addData("slidetarget", -3204);
+                    if (hardware.slide.getCurrentPosition() > -3204) {
                         hardware.slide.setPower(-0.7); // up
-                    } else if (hardware.slide.getCurrentPosition() < -2720) {
+                    } else if (hardware.slide.getCurrentPosition() < -3254) {
                         hardware.slide.setPower(0.7); // down
                     } else {
                         hardware.slide.setPower(0);
@@ -286,10 +293,10 @@ public class ManualDriveDookie extends LinearOpMode {
                 }
 
                 if (slidePos == 3) {
-                    telemetry.addData("slidetarget", -3840);
-                    if (hardware.slide.getCurrentPosition() > -3840) {
+                    telemetry.addData("slidetarget", -4608);
+                    if (hardware.slide.getCurrentPosition() > -4608) {
                         hardware.slide.setPower(-0.7); // up
-                    } else if (hardware.slide.getCurrentPosition() < -3890) {
+                    } else if (hardware.slide.getCurrentPosition() < -4658) {
                         hardware.slide.setPower(0.7); // down
                     } else {
                         hardware.slide.setPower(0);
@@ -350,7 +357,7 @@ public class ManualDriveDookie extends LinearOpMode {
                 hardware.rightHang.setPosition(1);
             }else{
                 hardware.leftHang.setPosition(1);
-                hardware.rightHang.setPosition(0);
+                hardware.rightHang.setPosition(0.5);
             }
             telemetry.update();
         }

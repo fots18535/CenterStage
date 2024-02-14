@@ -310,6 +310,8 @@ public class HunkOfMetal {
         while(mode.opModeIsActive()){
             double leftDist = hardware.lazerLeft.getDistance(DistanceUnit.INCH);
             double rightDist = hardware.lazerRight.getDistance(DistanceUnit.INCH);
+            double centerLeftDist = hardware.lazerCenterLeft.getDistance(DistanceUnit.INCH);
+            double centerRightDist = hardware.lazerCenterRight.getDistance(DistanceUnit.INCH);
 
             if(timer.seconds() > 4 || Math.min(leftDist,rightDist) < 1)
             {
