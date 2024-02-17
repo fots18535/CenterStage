@@ -86,10 +86,8 @@ public class BlueBackAuto extends LinearOpMode {
     public void doLastSteps()
     {
         hunk.forward(-0.5,20);
-        hunk.raiseArm();
-        sleep(1000);
-        hunk.lowerArm();
-        hardware.intakeMotor.setPower(0.5);
-        sleep(1000);
+        //hunk.raiseArm();
+        //sleep(1000);
+        //hunk.lowerArm();
     }
 }

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.vision.AprilTagYay;
 public class RedBackPixelAuto extends RedBackAuto{
     public void doLastSteps()
     {
+        hunk.forward(-0.5,14);
         hunk.chaChaRealSmooth(-0.5, 23);
         AprilTagYay april = new AprilTagYay(this, hardware);
         april.initializes();
@@ -16,10 +17,10 @@ public class RedBackPixelAuto extends RedBackAuto{
         hunk.lazerAlign();
         hunk.raiseSlide();
         sleep(2000);
-        hunk.midArmAndLower();
+        //hunk.midArmAndLower();
+        hunk.forward(0.5,3);
+        hunk.lowerSlide();
         hunk.lowerArm();
         hardware.intakeMotor.setPower(0.5);
-        sleep(1000);
-
     }
 }

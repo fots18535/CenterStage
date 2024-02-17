@@ -99,11 +99,11 @@ public class BlueBoardAuto extends LinearOpMode {
                         hunk.raiseSlide();
                         sleep(2000);
                         //hunk.forward(0.5, 3);
-                        hunk.midArmAndLower();
+                        //hunk.midArmAndLower();
+                        hunk.forward(0.5,3);
+                        hunk.lowerSlide();
                         hunk.lowerArm();
                         hardware.intakeMotor.setPower(0.5);
-                        hunk.forward(.5, 2);
-
                         //park in the backstage
                         hunk.chaChaRealSmooth(0.5, parkDistance);
 

@@ -8,18 +8,19 @@ import org.firstinspires.ftc.teamcode.vision.AprilTagYay;
 public class BlueBackPixelAuto extends BlueBackAuto {
     public void doLastSteps()
     {
+        hunk.forward(-0.5,14);
         hunk.chaChaRealSmooth(0.5, 23);
         AprilTagYay april = new AprilTagYay(this, hardware);
         april.initializes();
         april.align(targetTag);
-        hunk.midArm();
-        hunk.raiseSlide();
         hunk.raiseArm();
         hunk.lazerAlign();
+        hunk.raiseSlide();
         sleep(2000);
-        hunk.midArmAndLower();
+        //hunk.midArmAndLower();
+        hunk.forward(0.5,3);
+        hunk.lowerSlide();
         hunk.lowerArm();
         hardware.intakeMotor.setPower(0.5);
-
     }
 }
