@@ -255,6 +255,37 @@ public class HunkOfMetal {
        hardware.slide.setPower(0);
    }
 
+    public void midArm()
+    {
+        int armTargetTics = 195;
+        while(mode.opModeIsActive())
+        {
+            armTargetTics = 200;
+            mode.telemetry.addData("arm", hardware.arm.getCurrentPosition());
+            mode.telemetry.update();
+            if(armTargetTics - 10 <= hardware.arm.getCurrentPosition())
+            {
+                hardware.intakeMotor.setPower(0);
+                hardware.slide.setPower(0);
+            } else {
+                hardware.intakeMotor.setPower(-0.5);
+                if(hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(-0.2);
+                }
+            }
+
+            if(armTargetTics-15 <= hardware.arm.getCurrentPosition() && armTargetTics+15 >= hardware.arm.getCurrentPosition())
+            {
+                break;
+            }
+            hardware.intakeMotor.setPower(-0.5);
+            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+        }
+        hardware.intakeMotor.setPower(0);
+        hardware.slide.setPower(0);
+        hardware.arm.setPower(0);
+    }
+
    public void lowerArm()
    {
        int armTargetTics = 0;
@@ -282,11 +313,11 @@ public class HunkOfMetal {
     private double getArmPower(int targetPositon, int currentPosition){
         int difference = currentPosition - targetPositon;
         double y = -.013333333 * difference;
-        if(y < -0.4){
-            y = -0.4;
+        if(y < -0.5){
+            y = -0.5;
         }
-        if(y > 0.4) {
-            y = 0.4;
+        if(y > 0.5) {
+            y = 0.5;
         }
 
         // if the arm is going down limit the power to 0.1
@@ -301,7 +332,18 @@ public class HunkOfMetal {
 
         return y;
     }
+    private double getArmPower2(int targetPositon, int currentPosition){
+        int difference = currentPosition - targetPositon;
+        double y = -.013333333 * difference;
+        if(y < -0.6){
+            y = -0.6;
+        }
+        if(y > 0.6) {
+            y = 0.6;
+        }
 
+        return y;
+    }
     public void lazerAlign()
     {
         ElapsedTime timer = new ElapsedTime();
@@ -313,7 +355,7 @@ public class HunkOfMetal {
             double centerLeftDist = hardware.lazerCenterLeft.getDistance(DistanceUnit.INCH);
             double centerRightDist = hardware.lazerCenterRight.getDistance(DistanceUnit.INCH);
 
-            if(timer.seconds() > 4 || Math.min(leftDist,rightDist) < 1)
+            if(timer.seconds() > 2 || Math.min(leftDist,rightDist) < 1)
             {
                 break;
             }
@@ -352,6 +394,92 @@ public class HunkOfMetal {
             power = 0;
         }
         return power;
+    }
+
+    public void raiseSlide(){
+        while(mode.opModeIsActive()) {
+            if (hardware.slide.getCurrentPosition() > -1800) { //-840
+                hardware.slide.setPower(-0.7); // up
+            } else if (hardware.slide.getCurrentPosition() < -1850) {
+                hardware.slide.setPower(0.7); // down
+            } else {
+                hardware.slide.setPower(0);
+                break;
+            }
+        }
+    }
+
+    public void lowerSlide(){
+        while(mode.opModeIsActive()) {
+            if (!hardware.armStop.isPressed()) {
+                hardware.slide.setPower(0.7);
+            } else {
+                hardware.slide.setPower(0.0);
+               break;
+            }
+        }
+    }
+
+    public void midArmAndLower()
+    {
+        int armTargetTics = 195;
+        while(mode.opModeIsActive())
+        {
+            armTargetTics = 195;
+            if(armTargetTics-15 <= hardware.arm.getCurrentPosition() && armTargetTics+15 >= hardware.arm.getCurrentPosition())
+            {
+                if (!hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(0.7);
+                } else {
+                    hardware.slide.setPower(0.0);
+                    break;
+                }
+            } else {
+                hardware.intakeMotor.setPower(-0.5);
+                if(hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(-0.2);
+                }
+            }
+
+            hardware.intakeMotor.setPower(-0.5);
+            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+        }
+
+        hardware.intakeMotor.setPower(0);
+        hardware.slide.setPower(0);
+    }
+
+    public void midArmAndRaise()
+    {
+        int armTargetTics = 195;
+        while(mode.opModeIsActive())
+        {
+            armTargetTics = 202;
+            mode.telemetry.addData("arm", hardware.arm.getCurrentPosition());
+            mode.telemetry.update();
+            if(armTargetTics-10 <= hardware.arm.getCurrentPosition() && armTargetTics+10 >= hardware.arm.getCurrentPosition())
+            {
+                if (hardware.slide.getCurrentPosition() > -1800) { //-840
+                    hardware.slide.setPower(-0.7); // up
+                } else if (hardware.slide.getCurrentPosition() < -1850) {
+                    hardware.slide.setPower(0.7); // down
+                } else {
+                    hardware.slide.setPower(0);
+                    break;
+                }
+            } else {
+                hardware.intakeMotor.setPower(-0.5);
+                if(hardware.armStop.isPressed()) {
+                    hardware.slide.setPower(-0.2);
+                }
+            }
+
+            hardware.intakeMotor.setPower(-0.5);
+            hardware.arm.setPower(getArmPower(armTargetTics, hardware.arm.getCurrentPosition()));
+        }
+
+        hardware.intakeMotor.setPower(0);
+        hardware.slide.setPower(0);
     }
 }
 

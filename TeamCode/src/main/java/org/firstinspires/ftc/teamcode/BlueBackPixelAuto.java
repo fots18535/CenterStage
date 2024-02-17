@@ -12,10 +12,12 @@ public class BlueBackPixelAuto extends BlueBackAuto {
         AprilTagYay april = new AprilTagYay(this, hardware);
         april.initializes();
         april.align(targetTag);
-        hunk.lazerAlign();
+        hunk.midArm();
+        hunk.raiseSlide();
         hunk.raiseArm();
+        hunk.lazerAlign();
         sleep(2000);
-
+        hunk.midArmAndLower();
         hunk.lowerArm();
         hardware.intakeMotor.setPower(0.5);
 

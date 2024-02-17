@@ -12,10 +12,11 @@ public class RedBackPixelAuto extends RedBackAuto{
         AprilTagYay april = new AprilTagYay(this, hardware);
         april.initializes();
         april.align(targetTag);
-        hunk.lazerAlign();
         hunk.raiseArm();
+        hunk.lazerAlign();
+        hunk.raiseSlide();
         sleep(2000);
-
+        hunk.midArmAndLower();
         hunk.lowerArm();
         hardware.intakeMotor.setPower(0.5);
         sleep(1000);

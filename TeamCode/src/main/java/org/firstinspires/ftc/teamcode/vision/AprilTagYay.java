@@ -147,7 +147,7 @@ public class AprilTagYay
             // headingError in degrees +- 5
             // yawError in degrees +- 5
 
-            if(timer.seconds() > 5 || (targetFound && (rangeError > -2 && rangeError < 2) && (headingError > -5 && headingError < 5) && (yawError > -5 && yawError < 5)))
+            if(timer.seconds() > 4 || (targetFound && (rangeError > -2 && rangeError < 2) && (headingError > -5 && headingError < 5) && (yawError > -5 && yawError < 5)))
             {
                 navigationSuccess = true;
                 break;

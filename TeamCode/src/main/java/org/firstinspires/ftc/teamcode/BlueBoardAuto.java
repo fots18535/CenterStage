@@ -94,10 +94,12 @@ public class BlueBoardAuto extends LinearOpMode {
                         // place other pixel on the backboard using april tags that corresponds with the placement on the tapeline.
                         april.initializes();
                         april.align(targetTag);
-                        hunk.lazerAlign();
                         hunk.raiseArm();
+                        hunk.lazerAlign();
+                        hunk.raiseSlide();
                         sleep(2000);
-
+                        //hunk.forward(0.5, 3);
+                        hunk.midArmAndLower();
                         hunk.lowerArm();
                         hardware.intakeMotor.setPower(0.5);
                         hunk.forward(.5, 2);

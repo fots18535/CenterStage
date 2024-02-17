@@ -329,7 +329,7 @@ public class ManualDriveDookie extends LinearOpMode {
                     timer.reset();
                     launchTimerReset = true;
                 }
-                if(timer.seconds() > 2){
+                if(timer.seconds() > 1){
                     hardware.airplane.setPosition(1);
                 }
 
@@ -340,11 +340,11 @@ public class ManualDriveDookie extends LinearOpMode {
             }
 
             if(gamepad1.dpad_up){
-                hardware.hang.setPower(0.5);
+                hardware.hang.setPower(-0.5);
             }
 
             if(gamepad1.dpad_down){
-                hardware.hang.setPower(-0.5);
+                hardware.hang.setPower(0.5);
             }
 
             if(!gamepad1.dpad_up && !gamepad1.dpad_down){
@@ -369,11 +369,11 @@ public class ManualDriveDookie extends LinearOpMode {
         int difference = currentPosition - targetPositon;
         //double y = -.013333333 * difference;
         double y = -.02 * difference;
-        if(y < -0.45){
-            y = -0.45;
+        if(y < -0.6){
+            y = -0.6;
         }
-        if(y > 0.45) {
-            y = 0.45;
+        if(y > 0.6) {
+            y = 0.6;
         }
 
         // if the arm is going down limit the power to 0.1

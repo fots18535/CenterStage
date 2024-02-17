@@ -67,9 +67,9 @@ public class BlueBackAuto extends LinearOpMode {
             hunk.forward(-0.5, 8);
             hunk.forward(0.5, 8);
             hunk.chaChaRealSmooth(-0.5,19);
-            hunk.forward(-0.5,27);
+            hunk.forward(-0.8,27);
             hunk.turnLeft(85,0.5);
-            hunk.forward(-0.5,85);
+            hunk.forward(-0.8,85);
         } else {
 //                      //deliver pixel to right tape line
             hunk.forward(-0.5, 6);

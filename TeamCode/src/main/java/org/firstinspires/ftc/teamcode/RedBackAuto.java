@@ -63,17 +63,17 @@ public class RedBackAuto extends LinearOpMode {
             hunk.chaChaRealSmooth(0.5, 13);
             hunk.forward(0.5, 3);
             hunk.chaChaRealSmooth(-0.5, 37.5);
-            hunk.forward(-0.5, 24);
+            hunk.forward(-0.8, 24);
             hunk.turnRight(90, 0.5);
-            hunk.forward(-0.5, 36);
+            hunk.forward(-0.8, 36);
         } else if (icon == IconPosition.CENTER) {
 //                      //deliver pixel to center tape line
             hunk.forward(-0.5, 8);
             hunk.forward(0.5, 8);
             hunk.chaChaRealSmooth(0.5, 16);
-            hunk.forward(-0.5, 26);
+            hunk.forward(-0.8, 26);
             hunk.turnRight(90, 0.5);
-            hunk.forward(-0.5, 80);
+            hunk.forward(-0.8, 80);
         }
 //
         else {
@@ -82,16 +82,16 @@ public class RedBackAuto extends LinearOpMode {
             hunk.chaChaRealSmooth(-0.5, 6);
             hunk.forward(0.5, 3);
             hunk.chaChaRealSmooth(0.5, 16);
-            hunk.forward(-0.5, 24);
+            hunk.forward(-0.8, 24);
             hunk.turnRight(90, 0.5);
-            hunk.forward(-0.5, 70);
+            hunk.forward(-0.8, 70);
         }
         doLastSteps();
     }
 
     public void doLastSteps()
     {
-        hunk.forward(-0.5,20);
+        hunk.forward(-0.8,20);
         hunk.raiseArm();
         sleep(1000);
         hunk.lowerArm();
